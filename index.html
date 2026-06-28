@@ -1,3 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta property="og:title" content="SpectraStudio">
+<meta property="og:description" content="Professional spritesheet generator for SpectraVJS">
+<meta property="og:image" content="https://raw.githubusercontent.com/TrulyBlueMusic/SpectraStudio/refs/heads/main/favicon.png">
+<meta property="og:url" content="https://spectratools.vercel.app/">
+<meta property="og:type" content="website">
+
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpectraStudio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+/* ── THEMES ── */
+:root[data-theme="dark"] {
+  --bg0:#0a0a0a;--bg1:#111111;--bg2:#1a1a1a;--bg3:#222222;
+  --line:#2a2a2a;--line-hi:#444444;--fg0:#f0f0f0;--fg1:#a0a0a0;--fg2:#555555;
+  --acc:#e8e8e8;--acc-dim:#666666;--hi:#ffffff;--danger:#ff5555;--warn:#ffaa33;
+  --shadow:rgba(0,0,0,0.6);--chk1:#1a1a1a;--chk2:#111111;
+}
+:root[data-theme="light"] {
+  --bg0:#f5f4f0;--bg1:#eeece8;--bg2:#e4e2dd;--bg3:#d8d5cf;
+  --line:#c8c5be;--line-hi:#999690;--fg0:#1a1918;--fg1:#5a5854;--fg2:#9a9890;
+  --acc:#1a1918;--acc-dim:#888580;--hi:#000000;--danger:#cc2222;--warn:#cc7700;
+  --shadow:rgba(0,0,0,0.12);--chk1:#e0ddd8;--chk2:#d0cdc8;
+}
+:root[data-theme="amoled"] {
+  --bg0:#000000;--bg1:#000000;--bg2:#0d0d0d;--bg3:#1a1a1a;
+  --line:#2a2a2a;--line-hi:#ffffff;--fg0:#ffffff;--fg1:#bbbbbb;--fg2:#444444;
+  --acc:#ffffff;--acc-dim:#555555;--hi:#ffffff;--danger:#ffffff;--warn:#aaaaaa;
+  --shadow:rgba(255,255,255,0.05);--chk1:#111111;--chk2:#000000;
+}
+
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{height:100%;}
+body{
+  font-family:'IBM Plex Sans',sans-serif;font-size:13px;
+  background:var(--bg0);color:var(--fg0);height:100vh;
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:background 0.25s,color 0.25s;
+}
+
+/* ── TOPBAR ── */
+#topbar{
+  display:flex;align-items:center;height:44px;padding:0 16px;
+  background:var(--bg1);border-bottom:1px solid var(--line);
+  flex-shrink:0;position:relative;z-index:100;
+  transition:background 0.25s,border-color 0.25s;
+}
+.tb-wordmark{
+  font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;
+  letter-spacing:0.18em;color:var(--fg0);text-transform:uppercase;margin-right:20px;
+}
+.tb-slash{color:var(--fg2);font-family:'IBM Plex Mono',monospace;font-size:11px;margin:0 8px;}
+.tb-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--fg2);letter-spacing:0.14em;}
+.tb-spacer{flex:1;}
+.theme-switcher{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden;transition:border-color 0.25s;}
+.theme-btn{
+  background:transparent;border:none;padding:5px 11px;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;
+  color:var(--fg2);cursor:pointer;transition:background 0.15s,color 0.15s;
+  border-right:1px solid var(--line);
+}
+.theme-btn:last-child{border-right:none;}
+.theme-btn.active{background:var(--bg3);color:var(--fg0);}
+.theme-btn:hover:not(.active){background:var(--bg2);color:var(--fg1);}
+
+/* ── LAYOUT ── */
+#body{display:grid;grid-template-columns:280px 1fr;flex:1;overflow:hidden;min-height:0;}
+
+/* ── SIDEBAR ── */
+#sidebar{
+  background:var(--bg1);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;
+  transition:background 0.25s,border-color 0.25s;
+}
+#sidebar::-webkit-scrollbar{width:4px;}
+#sidebar::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px;}
+.s-group{border-bottom:1px solid var(--line);transition:border-color 0.25s;}
+.s-head{
+  padding:8px 14px 7px;background:var(--bg2);
+  font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:0.18em;color:var(--fg2);text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+  transition:background 0.25s;
+}
+.s-head-dot{width:4px;height:4px;border-radius:50%;background:var(--acc-dim);flex-shrink:0;transition:background 0.25s;}
+.s-body{padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
+
+/* ── DROPZONE ── */
+#dropzone{
+  margin:10px 14px;border:1px dashed var(--line-hi);border-radius:2px;
+  padding:22px 12px;text-align:center;cursor:pointer;position:relative;
+  transition:border-color 0.18s,background 0.18s,transform 0.18s,box-shadow 0.18s;
+  background:transparent;
+}
+#dropzone:hover{border-color:var(--acc);background:var(--bg2);transform:scale(1.01);}
+#dropzone.drag-over{
+  border-color:var(--fg0);background:var(--bg2);transform:scale(1.02);
+  box-shadow:0 0 0 2px var(--fg2) inset;
+  animation:dz-dash 0.6s linear infinite;
+}
+@keyframes dz-dash{
+  from{border-dash-offset:0}to{border-dash-offset:16px}
+}
+#dropzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.dz-icon{
+  font-family:'IBM Plex Mono',monospace;font-size:22px;color:var(--fg2);
+  display:block;margin-bottom:8px;transition:transform 0.18s,color 0.18s;
+}
+#dropzone:hover .dz-icon{transform:translateY(-3px);color:var(--fg1);}
+#dropzone.drag-over .dz-icon{transform:translateY(-5px) scale(1.1);color:var(--fg0);}
+.dz-label{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;color:var(--fg1);}
+.dz-formats{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg2);margin-top:4px;letter-spacing:0.08em;}
+#file-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--acc);margin-top:6px;word-break:break-all;}
+
+/* ── FORM ── */
+.field{display:flex;flex-direction:column;gap:4px;}
+.field-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;color:var(--fg2);text-transform:uppercase;}
+.field input[type=number],.field input[type=text]{
+  background:var(--bg0);border:1px solid var(--line);border-radius:2px;
+  color:var(--fg0);font-family:'IBM Plex Mono',monospace;font-size:12px;
+  padding:6px 8px;outline:none;transition:border-color 0.15s,background 0.15s;width:100%;
+  -moz-appearance:textfield;
+}
+.field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.field input:focus{border-color:var(--acc-dim);background:var(--bg1);}
+.field-note{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg2);line-height:1.5;}
+
+/* ── STAT GRID ── */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:2px;overflow:hidden;}
+.stat-cell{background:var(--bg2);padding:7px 8px;transition:background 0.15s;}
+.stat-val{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700;color:var(--fg0);line-height:1;transition:color 0.15s;}
+.stat-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--fg2);margin-top:3px;letter-spacing:0.1em;}
+.stat-val.bump{animation:stat-bump 0.25s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes stat-bump{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+/* ── COLOR ── */
+.color-row{display:flex;align-items:center;gap:8px;}
+.swatch-wrap{
+  width:28px;height:28px;border-radius:2px;border:1px solid var(--line);
+  position:relative;overflow:hidden;flex-shrink:0;cursor:pointer;
+  transition:transform 0.15s,border-color 0.15s;
+}
+.swatch-wrap:hover{transform:scale(1.1);border-color:var(--line-hi);}
+.swatch-wrap input[type=color]{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);opacity:0;cursor:pointer;}
+.color-hex-inp{
+  background:var(--bg0);border:1px solid var(--line);border-radius:2px;
+  color:var(--fg0);font-family:'IBM Plex Mono',monospace;font-size:11px;
+  padding:6px 8px;outline:none;flex:1;transition:border-color 0.15s;
+}
+.color-hex-inp:focus{border-color:var(--acc-dim);}
+.palette{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;}
+.pal-dot{
+  width:18px;height:18px;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;transition:transform 0.15s,border-color 0.2s,box-shadow 0.2s;flex-shrink:0;
+}
+.pal-dot:hover{transform:scale(1.25);}
+.pal-dot.active{border-color:var(--fg0);box-shadow:0 0 0 1px var(--fg2);}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:8px 12px;border:1px solid var(--line);border-radius:2px;
+  background:var(--bg3);color:var(--fg0);
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;
+  cursor:pointer;text-transform:uppercase;position:relative;overflow:hidden;
+  transition:background 0.15s,border-color 0.15s,color 0.15s,transform 0.1s,box-shadow 0.15s;
+  white-space:nowrap;
+}
+.btn:hover{background:var(--bg2);border-color:var(--line-hi);box-shadow:0 2px 8px var(--shadow);}
+.btn:active{transform:scale(0.97);}
+.btn:disabled{opacity:0.3;cursor:not-allowed;transform:none;}
+.btn-full{width:100%;}
+.btn-primary{background:var(--fg0);color:var(--bg0);border-color:var(--fg0);}
+.btn-primary:hover{background:var(--fg1);border-color:var(--fg1);color:var(--bg0);}
+.btn-primary:disabled{opacity:0.25;}
+.btn-sm{padding:5px 10px;font-size:9px;}
+/* ripple */
+.ripple{
+  position:absolute;border-radius:50%;background:rgba(255,255,255,0.15);
+  transform:scale(0);animation:rpl 0.4s ease-out forwards;pointer-events:none;
+}
+@keyframes rpl{to{transform:scale(4);opacity:0;}}
+
+/* ── PROGRESS ── */
+.prog-wrap{display:none;flex-direction:column;gap:5px;}
+.prog-wrap.on{display:flex;}
+.prog-track{height:2px;background:var(--line);border-radius:1px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--fg0);border-radius:1px;width:0%;transition:width 0.12s ease-out;}
+.prog-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg1);}
+
+/* ── MAIN ── */
+#main{display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+
+/* ── PREVIEW BAR ── */
+#preview-bar{
+  display:flex;align-items:center;gap:10px;height:36px;padding:0 8px 0 16px;
+  background:var(--bg1);border-bottom:1px solid var(--line);flex-shrink:0;
+  transition:background 0.25s;
+}
+.pbar-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;color:var(--fg2);text-transform:uppercase;}
+#sheet-tabs{display:flex;gap:3px;position:relative;}
+.stab{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;
+  padding:4px 10px;border-radius:2px;background:transparent;border:1px solid var(--line);
+  color:var(--fg2);cursor:pointer;text-transform:uppercase;
+  transition:border-color 0.15s,color 0.15s,background 0.15s;
+}
+.stab:hover{border-color:var(--line-hi);color:var(--fg1);}
+.stab.active{background:var(--bg3);border-color:var(--line-hi);color:var(--fg0);}
+
+/* view controls */
+#view-controls{display:flex;align-items:center;gap:4px;margin-left:auto;}
+.vc-btn{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;padding:3px 8px;
+  background:transparent;border:1px solid var(--line);border-radius:2px;
+  color:var(--fg2);cursor:pointer;transition:all 0.12s;white-space:nowrap;
+}
+.vc-btn:hover{border-color:var(--line-hi);color:var(--fg0);background:var(--bg2);}
+.vc-sep{width:1px;height:16px;background:var(--line);margin:0 2px;}
+
+/* ── LIVE PREVIEW ── */
+#live-preview-wrap{
+  background:var(--bg1);border-bottom:1px solid var(--line);
+  flex-shrink:0;display:none;
+}
+#live-preview-wrap.on{display:flex;align-items:center;gap:0;}
+#live-preview-canvas{
+  width:80px;height:60px;flex-shrink:0;
+  image-rendering:pixelated;background:var(--bg0);
+  border-right:1px solid var(--line);
+}
+#live-controls{display:flex;align-items:center;gap:6px;padding:0 10px;flex:1;}
+.lc-btn{
+  font-family:'IBM Plex Mono',monospace;font-size:12px;width:22px;height:22px;
+  background:transparent;border:1px solid var(--line);border-radius:2px;
+  color:var(--fg1);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.12s;flex-shrink:0;
+}
+.lc-btn:hover{border-color:var(--line-hi);color:var(--fg0);background:var(--bg2);}
+.lc-btn.active{background:var(--bg3);color:var(--fg0);border-color:var(--line-hi);}
+#live-info{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg2);
+  margin-left:auto;display:flex;gap:12px;
+}
+.li-item{display:flex;flex-direction:column;gap:1px;align-items:flex-end;}
+.li-val{color:var(--fg0);font-size:10px;}
+.li-lbl{font-size:8px;color:var(--fg2);letter-spacing:0.1em;}
+
+/* ── CANVAS AREA ── */
+#canvas-area{
+  flex:1;overflow:hidden;min-height:0;position:relative;
+  background:var(--bg0);cursor:default;
+}
+#canvas-viewport{
+  position:absolute;inset:0;overflow:hidden;
+  background-image:linear-gradient(45deg,var(--chk1) 25%,transparent 25%),
+    linear-gradient(-45deg,var(--chk1) 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,var(--chk1) 75%),
+    linear-gradient(-45deg,transparent 75%,var(--chk1) 75%);
+  background-size:16px 16px;
+  background-position:0 0,0 8px,8px -8px,-8px 0;
+  background-color:var(--chk2);
+}
+#canvas-transform{
+  position:absolute;transform-origin:0 0;
+  transition:none;will-change:transform;
+}
+#preview-canvas{
+  display:block;image-rendering:pixelated;
+  border:1px solid var(--line-hi);
+}
+#empty{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;text-align:center;
+  pointer-events:none;
+}
+.empty-glyph{font-family:'IBM Plex Mono',monospace;font-size:40px;color:var(--line);line-height:1;letter-spacing:-0.05em;}
+.empty-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.18em;color:var(--fg2);text-transform:uppercase;}
+.empty-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg2);line-height:1.8;letter-spacing:0.06em;}
+
+/* ── TIMELINE ── */
+#timeline{
+  flex-shrink:0;height:60px;background:var(--bg1);border-top:1px solid var(--line);
+  display:none;overflow-x:auto;overflow-y:hidden;position:relative;
+  transition:background 0.25s;
+}
+#timeline.on{display:block;}
+#timeline::-webkit-scrollbar{height:4px;}
+#timeline::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px;}
+#timeline-inner{display:flex;height:100%;align-items:center;padding:4px 8px;gap:2px;position:relative;min-width:100%;}
+.tl-frame{
+  flex-shrink:0;width:44px;height:44px;border:1px solid var(--line);border-radius:2px;
+  cursor:pointer;overflow:hidden;position:relative;transition:border-color 0.12s,transform 0.12s;
+  background:var(--bg0);
+}
+.tl-frame:hover{border-color:var(--line-hi);transform:scale(1.05);}
+.tl-frame.active{border-color:var(--fg0);}
+.tl-frame canvas{width:100%;height:100%;display:block;image-rendering:pixelated;}
+#tl-playhead{
+  position:absolute;top:0;bottom:0;width:2px;background:var(--fg0);
+  pointer-events:none;transition:left 0.08s linear;z-index:5;
+}
+
+/* ── STATUS BAR ── */
+#statusbar{
+  display:flex;align-items:center;gap:0;height:22px;
+  background:var(--bg1);border-top:1px solid var(--line);flex-shrink:0;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg2);
+  padding:0;overflow:hidden;transition:background 0.25s;
+}
+.sb-item{
+  padding:0 10px;height:100%;display:flex;align-items:center;gap:5px;
+  border-right:1px solid var(--line);white-space:nowrap;
+}
+.sb-item span:last-child{color:var(--fg1);}
+.sb-spacer{flex:1;}
+.sb-op{padding:0 10px;font-style:italic;color:var(--fg2);}
+
+/* ── OUTPUT ── */
+#output-strip{border-top:1px solid var(--line);background:var(--bg1);flex-shrink:0;transition:background 0.25s;}
+#output-strip-head{
+  display:flex;align-items:center;gap:8px;padding:8px 16px;
+  border-bottom:1px solid var(--line);
+}
+#output-strip-head span{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;color:var(--fg2);text-transform:uppercase;}
+#output-actions{display:none;gap:6px;flex-wrap:wrap;margin-left:auto;}
+#output-actions.on{display:flex;}
+#output-body{padding:10px 16px;}
+#lua-output{
+  display:none;background:var(--bg0);border:1px solid var(--line);border-radius:2px;
+  padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.7;
+  white-space:pre;overflow-x:auto;max-height:140px;overflow-y:auto;
+  transition:max-height 0.2s ease;
+}
+#lua-output.on{display:block;}
+#lua-output::-webkit-scrollbar{height:4px;width:4px;}
+#lua-output::-webkit-scrollbar-thumb{background:var(--line);}
+/* syntax highlight classes */
+.lua-key{color:var(--fg0);}
+.lua-str{color:var(--fg1);}
+.lua-num{color:var(--acc);}
+.lua-kw{color:var(--fg0);font-weight:700;}
+.lua-fn{color:var(--fg1);}
+.lua-comment{color:var(--fg2);font-style:italic;}
+
+/* ── GENERATION OVERLAY ── */
+#gen-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(3px);
+  display:none;align-items:center;justify-content:center;
+}
+#gen-overlay.on{display:flex;}
+#gen-modal{
+  background:var(--bg1);border:1px solid var(--line);border-radius:3px;
+  padding:28px 32px;min-width:340px;display:flex;flex-direction:column;gap:16px;
+  animation:modal-in 0.18s ease-out;
+}
+@keyframes modal-in{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
+.gm-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.16em;color:var(--fg0);}
+.gm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.gm-cell{background:var(--bg2);padding:8px 10px;border-radius:2px;}
+.gm-val{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--fg0);}
+.gm-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--fg2);margin-top:2px;letter-spacing:0.1em;}
+.gm-bar-track{height:3px;background:var(--line);border-radius:2px;overflow:hidden;}
+.gm-bar-fill{height:100%;background:var(--fg0);border-radius:2px;width:0%;transition:width 0.12s ease-out;}
+.gm-stage{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--fg1);}
+.gm-pct{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--fg0);text-align:center;}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:18px;right:18px;
+  background:var(--bg3);border:1px solid var(--line-hi);color:var(--fg0);
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.08em;
+  padding:8px 14px;border-radius:2px;
+  opacity:0;pointer-events:none;z-index:999;
+  transition:opacity 0.18s,transform 0.18s;
+  transform:translateY(8px);
+}
+#toast.on{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="tb-wordmark">SpectraStudio</div>
+  <div class="tb-slash">/</div>
+  <div class="tb-sub">SPRITESHEET GENERATOR &nbsp;·&nbsp; TRS™</div>
+  <div class="tb-spacer"></div>
+  <div class="theme-switcher">
+    <button class="theme-btn active" data-t="dark">DARK</button>
+    <button class="theme-btn" data-t="light">LIGHT</button>
+    <button class="theme-btn" data-t="amoled">AMOLED</button>
+  </div>
+</div>
+
+<div id="body">
+<div id="sidebar">
+
+  <div id="dropzone">
+    <input type="file" id="file-input" accept="image/gif,video/*">
+    <span class="dz-icon">↑</span>
+    <div class="dz-label">DROP FILE</div>
+    <div class="dz-formats">gif · mp4 · webm · mov · avi</div>
+    <div id="file-name"></div>
+  </div>
+
+  <div class="s-group" id="src-group" style="display:none">
+    <div class="s-head"><div class="s-head-dot"></div>SOURCE</div>
+    <div class="s-body">
+      <div class="stat-grid">
+        <div class="stat-cell"><div class="stat-val" id="src-w">—</div><div class="stat-lbl">WIDTH</div></div>
+        <div class="stat-cell"><div class="stat-val" id="src-h">—</div><div class="stat-lbl">HEIGHT</div></div>
+        <div class="stat-cell"><div class="stat-val" id="src-frames">—</div><div class="stat-lbl">FRAMES</div></div>
+        <div class="stat-cell"><div class="stat-val" id="src-fps">—</div><div class="stat-lbl">SRC FPS</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-group">
+    <div class="s-head"><div class="s-head-dot"></div>SHEET SETTINGS</div>
+    <div class="s-body">
+      <div class="field">
+        <div class="field-label">FRAME SIZE — longest edge (px)</div>
+        <input type="number" id="cell-size" value="128" min="16" max="1024">
+        <div class="field-note">Aspect ratio auto-detected from source</div>
+      </div>
+      <div class="field">
+        <div class="field-label">MAX SPRITESHEETS</div>
+        <input type="number" id="max-sheets" value="3" min="1" max="20">
+      </div>
+      <div class="field">
+        <div class="field-label">OUTPUT FPS</div>
+        <input type="number" id="out-fps" value="25" min="1" max="120">
+        <div class="field-note">Frame sample rate for video sources.</div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-cell"><div class="stat-val" id="c-fpr">—</div><div class="stat-lbl">F/ROW</div></div>
+        <div class="stat-cell"><div class="stat-val" id="c-rows">—</div><div class="stat-lbl">ROWS</div></div>
+        <div class="stat-cell"><div class="stat-val" id="c-fpsh">—</div><div class="stat-lbl">F/SHEET</div></div>
+        <div class="stat-cell"><div class="stat-val" id="c-total">—</div><div class="stat-lbl">TOTAL F</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-group">
+    <div class="s-head"><div class="s-head-dot"></div>REGISTRY COLOR</div>
+    <div class="s-body">
+      <div class="color-row">
+        <div class="swatch-wrap" id="swatch-wrap" style="background:#515151">
+          <input type="color" id="color-picker" value="#515151">
+        </div>
+        <input type="text" class="color-hex-inp" id="color-hex" value="#515151" maxlength="7">
+      </div>
+      <div class="palette">
+        <div class="pal-dot active" style="background:#515151" data-c="#515151"></div>
+        <div class="pal-dot" style="background:#f0f0f0" data-c="#f0f0f0"></div>
+        <div class="pal-dot" style="background:#000000;border:1px solid #444" data-c="#000000"></div>
+        <div class="pal-dot" style="background:#1e64c8" data-c="#1e64c8"></div>
+        <div class="pal-dot" style="background:#c83ca0" data-c="#c83ca0"></div>
+        <div class="pal-dot" style="background:#8c28dc" data-c="#8c28dc"></div>
+        <div class="pal-dot" style="background:#c82828" data-c="#c82828"></div>
+        <div class="pal-dot" style="background:#dcb414" data-c="#dcb414"></div>
+        <div class="pal-dot" style="background:#00c864" data-c="#00c864"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s-group">
+    <div class="s-head"><div class="s-head-dot"></div>REGISTRY ENTRY</div>
+    <div class="s-body">
+      <div class="field"><div class="field-label">KEY NAME</div><input type="text" id="entry-name" value="MyGif" placeholder="MyGif"></div>
+      <div class="field"><div class="field-label">DISPLAY NAME</div><input type="text" id="display-name" value="My GIF" placeholder="My GIF"></div>
+      <div class="field"><div class="field-label">CATEGORY</div><input type="text" id="category" value="general" placeholder="general"></div>
+    </div>
+  </div>
+
+  <div class="s-group">
+    <div class="s-head"><div class="s-head-dot"></div>GENERATE</div>
+    <div class="s-body">
+      <div class="prog-wrap" id="prog-wrap">
+        <div class="prog-label" id="prog-label">Processing...</div>
+        <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      </div>
+      <button class="btn btn-primary btn-full" id="btn-gen" disabled>▶  GENERATE SHEETS</button>
+    </div>
+  </div>
+
+</div><!-- /sidebar -->
+
+<div id="main">
+  <div id="preview-bar">
+    <div class="pbar-label">Preview</div>
+    <div id="sheet-tabs"></div>
+    <div id="view-controls">
+      <button class="vc-btn" id="vc-fit">Fit</button>
+      <button class="vc-btn" id="vc-100">100%</button>
+      <button class="vc-btn" id="vc-200">200%</button>
+      <button class="vc-btn" id="vc-400">400%</button>
+      <div class="vc-sep"></div>
+      <button class="vc-btn" id="vc-reset">Reset</button>
+    </div>
+  </div>
+
+  <div id="live-preview-wrap">
+    <canvas id="live-preview-canvas"></canvas>
+    <div id="live-controls">
+      <button class="lc-btn" id="lc-restart" title="Restart">⏮</button>
+      <button class="lc-btn" id="lc-play" title="Play/Pause">▶</button>
+      <button class="lc-btn active" id="lc-loop" title="Loop">⟳</button>
+      <div id="live-info">
+        <div class="li-item"><span class="li-val" id="li-frame">0/0</span><span class="li-lbl">FRAME</span></div>
+        <div class="li-item"><span class="li-val" id="li-fps">0</span><span class="li-lbl">FPS</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="canvas-area">
+    <div id="canvas-viewport">
+      <div id="canvas-transform">
+        <canvas id="preview-canvas"></canvas>
+      </div>
+    </div>
+    <div id="empty">
+      <div class="empty-glyph">[ ]</div>
+      <div class="empty-title">No source loaded</div>
+      <div class="empty-sub">Drop a GIF or video into the left panel.<br>Configure settings, then generate.</div>
+    </div>
+  </div>
+
+  <div id="timeline"><div id="timeline-inner"><div id="tl-playhead"></div></div></div>
+
+  <div id="statusbar">
+    <div class="sb-item"><span>ZOOM</span><span id="sb-zoom">100%</span></div>
+    <div class="sb-item"><span>SIZE</span><span id="sb-size">—</span></div>
+    <div class="sb-item"><span>FRAMES</span><span id="sb-frames">—</span></div>
+    <div class="sb-item"><span>FPS</span><span id="sb-fps">—</span></div>
+    <div class="sb-item"><span>SHEETS</span><span id="sb-sheets">—</span></div>
+    <div class="sb-item"><span>CURSOR</span><span id="sb-cursor">—</span></div>
+    <div class="sb-spacer"></div>
+    <div class="sb-op" id="sb-op">idle</div>
+  </div>
+
+  <div id="output-strip">
+    <div id="output-strip-head">
+      <span>Output</span>
+      <div id="output-actions">
+        <button class="btn btn-sm" id="btn-dl">⬇ Download all</button>
+        <button class="btn btn-sm" id="btn-lua">⎘ Copy Lua</button>
+        <button class="btn btn-sm" id="btn-reset">✕ Reset</button>
+      </div>
+    </div>
+    <div id="output-body"><pre id="lua-output"></pre></div>
+  </div>
+</div><!-- /main -->
+</div><!-- /body -->
+
+<!-- Generation overlay -->
+<div id="gen-overlay">
+  <div id="gen-modal">
+    <div class="gm-title">GENERATING SPRITESHEETS</div>
+    <div class="gm-pct" id="gm-pct">0%</div>
+    <div class="gm-bar-track"><div class="gm-bar-fill" id="gm-bar"></div></div>
+    <div class="gm-stage" id="gm-stage">Initialising...</div>
+    <div class="gm-grid">
+      <div class="gm-cell"><div class="gm-val" id="gm-sheet">—</div><div class="gm-lbl">SHEET</div></div>
+      <div class="gm-cell"><div class="gm-val" id="gm-frame">—</div><div class="gm-lbl">FRAME</div></div>
+      <div class="gm-cell"><div class="gm-val" id="gm-elapsed">0s</div><div class="gm-lbl">ELAPSED</div></div>
+      <div class="gm-cell"><div class="gm-val" id="gm-eta">—</div><div class="gm-lbl">ETA</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<canvas id="work-canvas" style="display:none"></canvas>
+<video id="work-video" style="display:none" muted crossorigin="anonymous" preload="auto"></video>
+
 <script>
-document.write(decodeURIComponent('%3C!DOCTYPE%20html%3E%0A%3Chtml%20lang%3D%22en%22%20data-theme%3D%22dark%22%3E%0A%3Chead%3E%0A%3Cmeta%20property%3D%22og%3Atitle%22%20content%3D%22SpectraStudio%22%3E%0A%3Cmeta%20property%3D%22og%3Adescription%22%20content%3D%22Professional%20spritesheet%20generator%20for%20SpectraVJS%22%3E%0A%3Cmeta%20property%3D%22og%3Aimage%22%20content%3D%22https%3A%2F%2Fraw.githubusercontent.com%2FTrulyBlueMusic%2FSpectraStudio%2Frefs%2Fheads%2Fmain%2Ffavicon.png%22%3E%0A%3Cmeta%20property%3D%22og%3Aurl%22%20content%3D%22https%3A%2F%2Fspectratools.vercel.app%2F%22%3E%0A%3Cmeta%20property%3D%22og%3Atype%22%20content%3D%22website%22%3E%0A%0A%3Cmeta%20name%3D%22twitter%3Acard%22%20content%3D%22summary_large_image%22%3E%0A%3Clink%20rel%3D%22icon%22%20type%3D%22image%2Fpng%22%20href%3D%22favicon.png%22%3E%0A%3Cmeta%20charset%3D%22UTF-8%22%3E%0A%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1.0%22%3E%0A%3Ctitle%3ESpectraStudio%3C%2Ftitle%3E%0A%3Cstyle%3E%0A%40import%20url(\'https%3A%2F%2Ffonts.googleapis.com%2Fcss2%3Ffamily%3DIBM%2BPlex%2BMono%3Awght%40400%3B500%3B700%26family%3DIBM%2BPlex%2BSans%3Awght%40400%3B500%3B600%26display%3Dswap\')%3B%0A%0A%2F*%20%E2%94%80%E2%94%80%20THEMES%20%E2%94%80%E2%94%80%20*%2F%0A%3Aroot%5Bdata-theme%3D%22dark%22%5D%20%7B%0A%20%20--bg0%3A%230a0a0a%3B--bg1%3A%23111111%3B--bg2%3A%231a1a1a%3B--bg3%3A%23222222%3B%0A%20%20--line%3A%232a2a2a%3B--line-hi%3A%23444444%3B--fg0%3A%23f0f0f0%3B--fg1%3A%23a0a0a0%3B--fg2%3A%23555555%3B%0A%20%20--acc%3A%23e8e8e8%3B--acc-dim%3A%23666666%3B--hi%3A%23ffffff%3B--danger%3A%23ff5555%3B--warn%3A%23ffaa33%3B%0A%20%20--shadow%3Argba(0%2C0%2C0%2C0.6)%3B--chk1%3A%231a1a1a%3B--chk2%3A%23111111%3B%0A%7D%0A%3Aroot%5Bdata-theme%3D%22light%22%5D%20%7B%0A%20%20--bg0%3A%23f5f4f0%3B--bg1%3A%23eeece8%3B--bg2%3A%23e4e2dd%3B--bg3%3A%23d8d5cf%3B%0A%20%20--line%3A%23c8c5be%3B--line-hi%3A%23999690%3B--fg0%3A%231a1918%3B--fg1%3A%235a5854%3B--fg2%3A%239a9890%3B%0A%20%20--acc%3A%231a1918%3B--acc-dim%3A%23888580%3B--hi%3A%23000000%3B--danger%3A%23cc2222%3B--warn%3A%23cc7700%3B%0A%20%20--shadow%3Argba(0%2C0%2C0%2C0.12)%3B--chk1%3A%23e0ddd8%3B--chk2%3A%23d0cdc8%3B%0A%7D%0A%3Aroot%5Bdata-theme%3D%22amoled%22%5D%20%7B%0A%20%20--bg0%3A%23000000%3B--bg1%3A%23000000%3B--bg2%3A%230d0d0d%3B--bg3%3A%231a1a1a%3B%0A%20%20--line%3A%232a2a2a%3B--line-hi%3A%23ffffff%3B--fg0%3A%23ffffff%3B--fg1%3A%23bbbbbb%3B--fg2%3A%23444444%3B%0A%20%20--acc%3A%23ffffff%3B--acc-dim%3A%23555555%3B--hi%3A%23ffffff%3B--danger%3A%23ffffff%3B--warn%3A%23aaaaaa%3B%0A%20%20--shadow%3Argba(255%2C255%2C255%2C0.05)%3B--chk1%3A%23111111%3B--chk2%3A%23000000%3B%0A%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20RESET%20%E2%94%80%E2%94%80%20*%2F%0A*%2C*%3A%3Abefore%2C*%3A%3Aafter%7Bbox-sizing%3Aborder-box%3Bmargin%3A0%3Bpadding%3A0%3B%7D%0Ahtml%7Bheight%3A100%25%3B%7D%0Abody%7B%0A%20%20font-family%3A\'IBM%20Plex%20Sans\'%2Csans-serif%3Bfont-size%3A13px%3B%0A%20%20background%3Avar(--bg0)%3Bcolor%3Avar(--fg0)%3Bheight%3A100vh%3B%0A%20%20display%3Aflex%3Bflex-direction%3Acolumn%3Boverflow%3Ahidden%3B%0A%20%20transition%3Abackground%200.25s%2Ccolor%200.25s%3B%0A%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20TOPBAR%20%E2%94%80%E2%94%80%20*%2F%0A%23topbar%7B%0A%20%20display%3Aflex%3Balign-items%3Acenter%3Bheight%3A44px%3Bpadding%3A0%2016px%3B%0A%20%20background%3Avar(--bg1)%3Bborder-bottom%3A1px%20solid%20var(--line)%3B%0A%20%20flex-shrink%3A0%3Bposition%3Arelative%3Bz-index%3A100%3B%0A%20%20transition%3Abackground%200.25s%2Cborder-color%200.25s%3B%0A%7D%0A.tb-wordmark%7B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A13px%3Bfont-weight%3A700%3B%0A%20%20letter-spacing%3A0.18em%3Bcolor%3Avar(--fg0)%3Btext-transform%3Auppercase%3Bmargin-right%3A20px%3B%0A%7D%0A.tb-slash%7Bcolor%3Avar(--fg2)%3Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A11px%3Bmargin%3A0%208px%3B%7D%0A.tb-sub%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A10px%3Bcolor%3Avar(--fg2)%3Bletter-spacing%3A0.14em%3B%7D%0A.tb-spacer%7Bflex%3A1%3B%7D%0A.theme-switcher%7Bdisplay%3Aflex%3Bborder%3A1px%20solid%20var(--line)%3Bborder-radius%3A3px%3Boverflow%3Ahidden%3Btransition%3Aborder-color%200.25s%3B%7D%0A.theme-btn%7B%0A%20%20background%3Atransparent%3Bborder%3Anone%3Bpadding%3A5px%2011px%3B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bletter-spacing%3A0.1em%3B%0A%20%20color%3Avar(--fg2)%3Bcursor%3Apointer%3Btransition%3Abackground%200.15s%2Ccolor%200.15s%3B%0A%20%20border-right%3A1px%20solid%20var(--line)%3B%0A%7D%0A.theme-btn%3Alast-child%7Bborder-right%3Anone%3B%7D%0A.theme-btn.active%7Bbackground%3Avar(--bg3)%3Bcolor%3Avar(--fg0)%3B%7D%0A.theme-btn%3Ahover%3Anot(.active)%7Bbackground%3Avar(--bg2)%3Bcolor%3Avar(--fg1)%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20LAYOUT%20%E2%94%80%E2%94%80%20*%2F%0A%23body%7Bdisplay%3Agrid%3Bgrid-template-columns%3A280px%201fr%3Bflex%3A1%3Boverflow%3Ahidden%3Bmin-height%3A0%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20SIDEBAR%20%E2%94%80%E2%94%80%20*%2F%0A%23sidebar%7B%0A%20%20background%3Avar(--bg1)%3Bborder-right%3A1px%20solid%20var(--line)%3B%0A%20%20display%3Aflex%3Bflex-direction%3Acolumn%3Boverflow-y%3Aauto%3Boverflow-x%3Ahidden%3B%0A%20%20transition%3Abackground%200.25s%2Cborder-color%200.25s%3B%0A%7D%0A%23sidebar%3A%3A-webkit-scrollbar%7Bwidth%3A4px%3B%7D%0A%23sidebar%3A%3A-webkit-scrollbar-thumb%7Bbackground%3Avar(--line)%3Bborder-radius%3A2px%3B%7D%0A.s-group%7Bborder-bottom%3A1px%20solid%20var(--line)%3Btransition%3Aborder-color%200.25s%3B%7D%0A.s-head%7B%0A%20%20padding%3A8px%2014px%207px%3Bbackground%3Avar(--bg2)%3B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bfont-weight%3A700%3B%0A%20%20letter-spacing%3A0.18em%3Bcolor%3Avar(--fg2)%3Btext-transform%3Auppercase%3B%0A%20%20display%3Aflex%3Balign-items%3Acenter%3Bgap%3A8px%3B%0A%20%20transition%3Abackground%200.25s%3B%0A%7D%0A.s-head-dot%7Bwidth%3A4px%3Bheight%3A4px%3Bborder-radius%3A50%25%3Bbackground%3Avar(--acc-dim)%3Bflex-shrink%3A0%3Btransition%3Abackground%200.25s%3B%7D%0A.s-body%7Bpadding%3A12px%2014px%3Bdisplay%3Aflex%3Bflex-direction%3Acolumn%3Bgap%3A10px%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20DROPZONE%20%E2%94%80%E2%94%80%20*%2F%0A%23dropzone%7B%0A%20%20margin%3A10px%2014px%3Bborder%3A1px%20dashed%20var(--line-hi)%3Bborder-radius%3A2px%3B%0A%20%20padding%3A22px%2012px%3Btext-align%3Acenter%3Bcursor%3Apointer%3Bposition%3Arelative%3B%0A%20%20transition%3Aborder-color%200.18s%2Cbackground%200.18s%2Ctransform%200.18s%2Cbox-shadow%200.18s%3B%0A%20%20background%3Atransparent%3B%0A%7D%0A%23dropzone%3Ahover%7Bborder-color%3Avar(--acc)%3Bbackground%3Avar(--bg2)%3Btransform%3Ascale(1.01)%3B%7D%0A%23dropzone.drag-over%7B%0A%20%20border-color%3Avar(--fg0)%3Bbackground%3Avar(--bg2)%3Btransform%3Ascale(1.02)%3B%0A%20%20box-shadow%3A0%200%200%202px%20var(--fg2)%20inset%3B%0A%20%20animation%3Adz-dash%200.6s%20linear%20infinite%3B%0A%7D%0A%40keyframes%20dz-dash%7B%0A%20%20from%7Bborder-dash-offset%3A0%7Dto%7Bborder-dash-offset%3A16px%7D%0A%7D%0A%23dropzone%20input%5Btype%3Dfile%5D%7Bposition%3Aabsolute%3Binset%3A0%3Bopacity%3A0%3Bcursor%3Apointer%3Bwidth%3A100%25%3Bheight%3A100%25%3B%7D%0A.dz-icon%7B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A22px%3Bcolor%3Avar(--fg2)%3B%0A%20%20display%3Ablock%3Bmargin-bottom%3A8px%3Btransition%3Atransform%200.18s%2Ccolor%200.18s%3B%0A%7D%0A%23dropzone%3Ahover%20.dz-icon%7Btransform%3AtranslateY(-3px)%3Bcolor%3Avar(--fg1)%3B%7D%0A%23dropzone.drag-over%20.dz-icon%7Btransform%3AtranslateY(-5px)%20scale(1.1)%3Bcolor%3Avar(--fg0)%3B%7D%0A.dz-label%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A10px%3Bfont-weight%3A700%3Bletter-spacing%3A0.12em%3Bcolor%3Avar(--fg1)%3B%7D%0A.dz-formats%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bcolor%3Avar(--fg2)%3Bmargin-top%3A4px%3Bletter-spacing%3A0.08em%3B%7D%0A%23file-name%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bcolor%3Avar(--acc)%3Bmargin-top%3A6px%3Bword-break%3Abreak-all%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20FORM%20%E2%94%80%E2%94%80%20*%2F%0A.field%7Bdisplay%3Aflex%3Bflex-direction%3Acolumn%3Bgap%3A4px%3B%7D%0A.field-label%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bletter-spacing%3A0.12em%3Bcolor%3Avar(--fg2)%3Btext-transform%3Auppercase%3B%7D%0A.field%20input%5Btype%3Dnumber%5D%2C.field%20input%5Btype%3Dtext%5D%7B%0A%20%20background%3Avar(--bg0)%3Bborder%3A1px%20solid%20var(--line)%3Bborder-radius%3A2px%3B%0A%20%20color%3Avar(--fg0)%3Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A12px%3B%0A%20%20padding%3A6px%208px%3Boutline%3Anone%3Btransition%3Aborder-color%200.15s%2Cbackground%200.15s%3Bwidth%3A100%25%3B%0A%20%20-moz-appearance%3Atextfield%3B%0A%7D%0A.field%20input%3A%3A-webkit-outer-spin-button%2C.field%20input%3A%3A-webkit-inner-spin-button%7B-webkit-appearance%3Anone%3B%7D%0A.field%20input%3Afocus%7Bborder-color%3Avar(--acc-dim)%3Bbackground%3Avar(--bg1)%3B%7D%0A.field-note%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bcolor%3Avar(--fg2)%3Bline-height%3A1.5%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20STAT%20GRID%20%E2%94%80%E2%94%80%20*%2F%0A.stat-grid%7Bdisplay%3Agrid%3Bgrid-template-columns%3A1fr%201fr%3Bgap%3A1px%3Bbackground%3Avar(--line)%3Bborder%3A1px%20solid%20var(--line)%3Bborder-radius%3A2px%3Boverflow%3Ahidden%3B%7D%0A.stat-cell%7Bbackground%3Avar(--bg2)%3Bpadding%3A7px%208px%3Btransition%3Abackground%200.15s%3B%7D%0A.stat-val%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A15px%3Bfont-weight%3A700%3Bcolor%3Avar(--fg0)%3Bline-height%3A1%3Btransition%3Acolor%200.15s%3B%7D%0A.stat-lbl%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A8px%3Bcolor%3Avar(--fg2)%3Bmargin-top%3A3px%3Bletter-spacing%3A0.1em%3B%7D%0A.stat-val.bump%7Banimation%3Astat-bump%200.25s%20cubic-bezier(0.34%2C1.56%2C0.64%2C1)%3B%7D%0A%40keyframes%20stat-bump%7B0%25%7Btransform%3Ascale(1)%7D50%25%7Btransform%3Ascale(1.2)%7D100%25%7Btransform%3Ascale(1)%7D%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20COLOR%20%E2%94%80%E2%94%80%20*%2F%0A.color-row%7Bdisplay%3Aflex%3Balign-items%3Acenter%3Bgap%3A8px%3B%7D%0A.swatch-wrap%7B%0A%20%20width%3A28px%3Bheight%3A28px%3Bborder-radius%3A2px%3Bborder%3A1px%20solid%20var(--line)%3B%0A%20%20position%3Arelative%3Boverflow%3Ahidden%3Bflex-shrink%3A0%3Bcursor%3Apointer%3B%0A%20%20transition%3Atransform%200.15s%2Cborder-color%200.15s%3B%0A%7D%0A.swatch-wrap%3Ahover%7Btransform%3Ascale(1.1)%3Bborder-color%3Avar(--line-hi)%3B%7D%0A.swatch-wrap%20input%5Btype%3Dcolor%5D%7Bposition%3Aabsolute%3Binset%3A-4px%3Bwidth%3Acalc(100%25%20%2B%208px)%3Bheight%3Acalc(100%25%20%2B%208px)%3Bopacity%3A0%3Bcursor%3Apointer%3B%7D%0A.color-hex-inp%7B%0A%20%20background%3Avar(--bg0)%3Bborder%3A1px%20solid%20var(--line)%3Bborder-radius%3A2px%3B%0A%20%20color%3Avar(--fg0)%3Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A11px%3B%0A%20%20padding%3A6px%208px%3Boutline%3Anone%3Bflex%3A1%3Btransition%3Aborder-color%200.15s%3B%0A%7D%0A.color-hex-inp%3Afocus%7Bborder-color%3Avar(--acc-dim)%3B%7D%0A.palette%7Bdisplay%3Aflex%3Bgap%3A5px%3Bflex-wrap%3Awrap%3Bmargin-top%3A2px%3B%7D%0A.pal-dot%7B%0A%20%20width%3A18px%3Bheight%3A18px%3Bborder-radius%3A50%25%3Bcursor%3Apointer%3B%0A%20%20border%3A2px%20solid%20transparent%3Btransition%3Atransform%200.15s%2Cborder-color%200.2s%2Cbox-shadow%200.2s%3Bflex-shrink%3A0%3B%0A%7D%0A.pal-dot%3Ahover%7Btransform%3Ascale(1.25)%3B%7D%0A.pal-dot.active%7Bborder-color%3Avar(--fg0)%3Bbox-shadow%3A0%200%200%201px%20var(--fg2)%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20BUTTONS%20%E2%94%80%E2%94%80%20*%2F%0A.btn%7B%0A%20%20display%3Ainline-flex%3Balign-items%3Acenter%3Bjustify-content%3Acenter%3Bgap%3A6px%3B%0A%20%20padding%3A8px%2012px%3Bborder%3A1px%20solid%20var(--line)%3Bborder-radius%3A2px%3B%0A%20%20background%3Avar(--bg3)%3Bcolor%3Avar(--fg0)%3B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A10px%3Bfont-weight%3A700%3Bletter-spacing%3A0.1em%3B%0A%20%20cursor%3Apointer%3Btext-transform%3Auppercase%3Bposition%3Arelative%3Boverflow%3Ahidden%3B%0A%20%20transition%3Abackground%200.15s%2Cborder-color%200.15s%2Ccolor%200.15s%2Ctransform%200.1s%2Cbox-shadow%200.15s%3B%0A%20%20white-space%3Anowrap%3B%0A%7D%0A.btn%3Ahover%7Bbackground%3Avar(--bg2)%3Bborder-color%3Avar(--line-hi)%3Bbox-shadow%3A0%202px%208px%20var(--shadow)%3B%7D%0A.btn%3Aactive%7Btransform%3Ascale(0.97)%3B%7D%0A.btn%3Adisabled%7Bopacity%3A0.3%3Bcursor%3Anot-allowed%3Btransform%3Anone%3B%7D%0A.btn-full%7Bwidth%3A100%25%3B%7D%0A.btn-primary%7Bbackground%3Avar(--fg0)%3Bcolor%3Avar(--bg0)%3Bborder-color%3Avar(--fg0)%3B%7D%0A.btn-primary%3Ahover%7Bbackground%3Avar(--fg1)%3Bborder-color%3Avar(--fg1)%3Bcolor%3Avar(--bg0)%3B%7D%0A.btn-primary%3Adisabled%7Bopacity%3A0.25%3B%7D%0A.btn-sm%7Bpadding%3A5px%2010px%3Bfont-size%3A9px%3B%7D%0A%2F*%20ripple%20*%2F%0A.ripple%7B%0A%20%20position%3Aabsolute%3Bborder-radius%3A50%25%3Bbackground%3Argba(255%2C255%2C255%2C0.15)%3B%0A%20%20transform%3Ascale(0)%3Banimation%3Arpl%200.4s%20ease-out%20forwards%3Bpointer-events%3Anone%3B%0A%7D%0A%40keyframes%20rpl%7Bto%7Btransform%3Ascale(4)%3Bopacity%3A0%3B%7D%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20PROGRESS%20%E2%94%80%E2%94%80%20*%2F%0A.prog-wrap%7Bdisplay%3Anone%3Bflex-direction%3Acolumn%3Bgap%3A5px%3B%7D%0A.prog-wrap.on%7Bdisplay%3Aflex%3B%7D%0A.prog-track%7Bheight%3A2px%3Bbackground%3Avar(--line)%3Bborder-radius%3A1px%3Boverflow%3Ahidden%3B%7D%0A.prog-fill%7Bheight%3A100%25%3Bbackground%3Avar(--fg0)%3Bborder-radius%3A1px%3Bwidth%3A0%25%3Btransition%3Awidth%200.12s%20ease-out%3B%7D%0A.prog-label%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bcolor%3Avar(--fg1)%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20MAIN%20%E2%94%80%E2%94%80%20*%2F%0A%23main%7Bdisplay%3Aflex%3Bflex-direction%3Acolumn%3Boverflow%3Ahidden%3Bmin-height%3A0%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20PREVIEW%20BAR%20%E2%94%80%E2%94%80%20*%2F%0A%23preview-bar%7B%0A%20%20display%3Aflex%3Balign-items%3Acenter%3Bgap%3A10px%3Bheight%3A36px%3Bpadding%3A0%208px%200%2016px%3B%0A%20%20background%3Avar(--bg1)%3Bborder-bottom%3A1px%20solid%20var(--line)%3Bflex-shrink%3A0%3B%0A%20%20transition%3Abackground%200.25s%3B%0A%7D%0A.pbar-label%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bletter-spacing%3A0.14em%3Bcolor%3Avar(--fg2)%3Btext-transform%3Auppercase%3B%7D%0A%23sheet-tabs%7Bdisplay%3Aflex%3Bgap%3A3px%3Bposition%3Arelative%3B%7D%0A.stab%7B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bletter-spacing%3A0.1em%3B%0A%20%20padding%3A4px%2010px%3Bborder-radius%3A2px%3Bbackground%3Atransparent%3Bborder%3A1px%20solid%20var(--line)%3B%0A%20%20color%3Avar(--fg2)%3Bcursor%3Apointer%3Btext-transform%3Auppercase%3B%0A%20%20transition%3Aborder-color%200.15s%2Ccolor%200.15s%2Cbackground%200.15s%3B%0A%7D%0A.stab%3Ahover%7Bborder-color%3Avar(--line-hi)%3Bcolor%3Avar(--fg1)%3B%7D%0A.stab.active%7Bbackground%3Avar(--bg3)%3Bborder-color%3Avar(--line-hi)%3Bcolor%3Avar(--fg0)%3B%7D%0A%0A%2F*%20view%20controls%20*%2F%0A%23view-controls%7Bdisplay%3Aflex%3Balign-items%3Acenter%3Bgap%3A4px%3Bmargin-left%3Aauto%3B%7D%0A.vc-btn%7B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bpadding%3A3px%208px%3B%0A%20%20background%3Atransparent%3Bborder%3A1px%20solid%20var(--line)%3Bborder-radius%3A2px%3B%0A%20%20color%3Avar(--fg2)%3Bcursor%3Apointer%3Btransition%3Aall%200.12s%3Bwhite-space%3Anowrap%3B%0A%7D%0A.vc-btn%3Ahover%7Bborder-color%3Avar(--line-hi)%3Bcolor%3Avar(--fg0)%3Bbackground%3Avar(--bg2)%3B%7D%0A.vc-sep%7Bwidth%3A1px%3Bheight%3A16px%3Bbackground%3Avar(--line)%3Bmargin%3A0%202px%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20LIVE%20PREVIEW%20%E2%94%80%E2%94%80%20*%2F%0A%23live-preview-wrap%7B%0A%20%20background%3Avar(--bg1)%3Bborder-bottom%3A1px%20solid%20var(--line)%3B%0A%20%20flex-shrink%3A0%3Bdisplay%3Anone%3B%0A%7D%0A%23live-preview-wrap.on%7Bdisplay%3Aflex%3Balign-items%3Acenter%3Bgap%3A0%3B%7D%0A%23live-preview-canvas%7B%0A%20%20width%3A80px%3Bheight%3A60px%3Bflex-shrink%3A0%3B%0A%20%20image-rendering%3Apixelated%3Bbackground%3Avar(--bg0)%3B%0A%20%20border-right%3A1px%20solid%20var(--line)%3B%0A%7D%0A%23live-controls%7Bdisplay%3Aflex%3Balign-items%3Acenter%3Bgap%3A6px%3Bpadding%3A0%2010px%3Bflex%3A1%3B%7D%0A.lc-btn%7B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A12px%3Bwidth%3A22px%3Bheight%3A22px%3B%0A%20%20background%3Atransparent%3Bborder%3A1px%20solid%20var(--line)%3Bborder-radius%3A2px%3B%0A%20%20color%3Avar(--fg1)%3Bcursor%3Apointer%3Bdisplay%3Aflex%3Balign-items%3Acenter%3Bjustify-content%3Acenter%3B%0A%20%20transition%3Aall%200.12s%3Bflex-shrink%3A0%3B%0A%7D%0A.lc-btn%3Ahover%7Bborder-color%3Avar(--line-hi)%3Bcolor%3Avar(--fg0)%3Bbackground%3Avar(--bg2)%3B%7D%0A.lc-btn.active%7Bbackground%3Avar(--bg3)%3Bcolor%3Avar(--fg0)%3Bborder-color%3Avar(--line-hi)%3B%7D%0A%23live-info%7B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bcolor%3Avar(--fg2)%3B%0A%20%20margin-left%3Aauto%3Bdisplay%3Aflex%3Bgap%3A12px%3B%0A%7D%0A.li-item%7Bdisplay%3Aflex%3Bflex-direction%3Acolumn%3Bgap%3A1px%3Balign-items%3Aflex-end%3B%7D%0A.li-val%7Bcolor%3Avar(--fg0)%3Bfont-size%3A10px%3B%7D%0A.li-lbl%7Bfont-size%3A8px%3Bcolor%3Avar(--fg2)%3Bletter-spacing%3A0.1em%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20CANVAS%20AREA%20%E2%94%80%E2%94%80%20*%2F%0A%23canvas-area%7B%0A%20%20flex%3A1%3Boverflow%3Ahidden%3Bmin-height%3A0%3Bposition%3Arelative%3B%0A%20%20background%3Avar(--bg0)%3Bcursor%3Adefault%3B%0A%7D%0A%23canvas-viewport%7B%0A%20%20position%3Aabsolute%3Binset%3A0%3Boverflow%3Ahidden%3B%0A%20%20background-image%3Alinear-gradient(45deg%2Cvar(--chk1)%2025%25%2Ctransparent%2025%25)%2C%0A%20%20%20%20linear-gradient(-45deg%2Cvar(--chk1)%2025%25%2Ctransparent%2025%25)%2C%0A%20%20%20%20linear-gradient(45deg%2Ctransparent%2075%25%2Cvar(--chk1)%2075%25)%2C%0A%20%20%20%20linear-gradient(-45deg%2Ctransparent%2075%25%2Cvar(--chk1)%2075%25)%3B%0A%20%20background-size%3A16px%2016px%3B%0A%20%20background-position%3A0%200%2C0%208px%2C8px%20-8px%2C-8px%200%3B%0A%20%20background-color%3Avar(--chk2)%3B%0A%7D%0A%23canvas-transform%7B%0A%20%20position%3Aabsolute%3Btransform-origin%3A0%200%3B%0A%20%20transition%3Anone%3Bwill-change%3Atransform%3B%0A%7D%0A%23preview-canvas%7B%0A%20%20display%3Ablock%3Bimage-rendering%3Apixelated%3B%0A%20%20border%3A1px%20solid%20var(--line-hi)%3B%0A%7D%0A%23empty%7B%0A%20%20position%3Aabsolute%3Binset%3A0%3Bdisplay%3Aflex%3Bflex-direction%3Acolumn%3B%0A%20%20align-items%3Acenter%3Bjustify-content%3Acenter%3Bgap%3A10px%3Btext-align%3Acenter%3B%0A%20%20pointer-events%3Anone%3B%0A%7D%0A.empty-glyph%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A40px%3Bcolor%3Avar(--line)%3Bline-height%3A1%3Bletter-spacing%3A-0.05em%3B%7D%0A.empty-title%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A11px%3Bfont-weight%3A700%3Bletter-spacing%3A0.18em%3Bcolor%3Avar(--fg2)%3Btext-transform%3Auppercase%3B%7D%0A.empty-sub%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bcolor%3Avar(--fg2)%3Bline-height%3A1.8%3Bletter-spacing%3A0.06em%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20TIMELINE%20%E2%94%80%E2%94%80%20*%2F%0A%23timeline%7B%0A%20%20flex-shrink%3A0%3Bheight%3A60px%3Bbackground%3Avar(--bg1)%3Bborder-top%3A1px%20solid%20var(--line)%3B%0A%20%20display%3Anone%3Boverflow-x%3Aauto%3Boverflow-y%3Ahidden%3Bposition%3Arelative%3B%0A%20%20transition%3Abackground%200.25s%3B%0A%7D%0A%23timeline.on%7Bdisplay%3Ablock%3B%7D%0A%23timeline%3A%3A-webkit-scrollbar%7Bheight%3A4px%3B%7D%0A%23timeline%3A%3A-webkit-scrollbar-thumb%7Bbackground%3Avar(--line)%3Bborder-radius%3A2px%3B%7D%0A%23timeline-inner%7Bdisplay%3Aflex%3Bheight%3A100%25%3Balign-items%3Acenter%3Bpadding%3A4px%208px%3Bgap%3A2px%3Bposition%3Arelative%3Bmin-width%3A100%25%3B%7D%0A.tl-frame%7B%0A%20%20flex-shrink%3A0%3Bwidth%3A44px%3Bheight%3A44px%3Bborder%3A1px%20solid%20var(--line)%3Bborder-radius%3A2px%3B%0A%20%20cursor%3Apointer%3Boverflow%3Ahidden%3Bposition%3Arelative%3Btransition%3Aborder-color%200.12s%2Ctransform%200.12s%3B%0A%20%20background%3Avar(--bg0)%3B%0A%7D%0A.tl-frame%3Ahover%7Bborder-color%3Avar(--line-hi)%3Btransform%3Ascale(1.05)%3B%7D%0A.tl-frame.active%7Bborder-color%3Avar(--fg0)%3B%7D%0A.tl-frame%20canvas%7Bwidth%3A100%25%3Bheight%3A100%25%3Bdisplay%3Ablock%3Bimage-rendering%3Apixelated%3B%7D%0A%23tl-playhead%7B%0A%20%20position%3Aabsolute%3Btop%3A0%3Bbottom%3A0%3Bwidth%3A2px%3Bbackground%3Avar(--fg0)%3B%0A%20%20pointer-events%3Anone%3Btransition%3Aleft%200.08s%20linear%3Bz-index%3A5%3B%0A%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20STATUS%20BAR%20%E2%94%80%E2%94%80%20*%2F%0A%23statusbar%7B%0A%20%20display%3Aflex%3Balign-items%3Acenter%3Bgap%3A0%3Bheight%3A22px%3B%0A%20%20background%3Avar(--bg1)%3Bborder-top%3A1px%20solid%20var(--line)%3Bflex-shrink%3A0%3B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bcolor%3Avar(--fg2)%3B%0A%20%20padding%3A0%3Boverflow%3Ahidden%3Btransition%3Abackground%200.25s%3B%0A%7D%0A.sb-item%7B%0A%20%20padding%3A0%2010px%3Bheight%3A100%25%3Bdisplay%3Aflex%3Balign-items%3Acenter%3Bgap%3A5px%3B%0A%20%20border-right%3A1px%20solid%20var(--line)%3Bwhite-space%3Anowrap%3B%0A%7D%0A.sb-item%20span%3Alast-child%7Bcolor%3Avar(--fg1)%3B%7D%0A.sb-spacer%7Bflex%3A1%3B%7D%0A.sb-op%7Bpadding%3A0%2010px%3Bfont-style%3Aitalic%3Bcolor%3Avar(--fg2)%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20OUTPUT%20%E2%94%80%E2%94%80%20*%2F%0A%23output-strip%7Bborder-top%3A1px%20solid%20var(--line)%3Bbackground%3Avar(--bg1)%3Bflex-shrink%3A0%3Btransition%3Abackground%200.25s%3B%7D%0A%23output-strip-head%7B%0A%20%20display%3Aflex%3Balign-items%3Acenter%3Bgap%3A8px%3Bpadding%3A8px%2016px%3B%0A%20%20border-bottom%3A1px%20solid%20var(--line)%3B%0A%7D%0A%23output-strip-head%20span%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A9px%3Bletter-spacing%3A0.14em%3Bcolor%3Avar(--fg2)%3Btext-transform%3Auppercase%3B%7D%0A%23output-actions%7Bdisplay%3Anone%3Bgap%3A6px%3Bflex-wrap%3Awrap%3Bmargin-left%3Aauto%3B%7D%0A%23output-actions.on%7Bdisplay%3Aflex%3B%7D%0A%23output-body%7Bpadding%3A10px%2016px%3B%7D%0A%23lua-output%7B%0A%20%20display%3Anone%3Bbackground%3Avar(--bg0)%3Bborder%3A1px%20solid%20var(--line)%3Bborder-radius%3A2px%3B%0A%20%20padding%3A10px%2012px%3Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A10px%3Bline-height%3A1.7%3B%0A%20%20white-space%3Apre%3Boverflow-x%3Aauto%3Bmax-height%3A140px%3Boverflow-y%3Aauto%3B%0A%20%20transition%3Amax-height%200.2s%20ease%3B%0A%7D%0A%23lua-output.on%7Bdisplay%3Ablock%3B%7D%0A%23lua-output%3A%3A-webkit-scrollbar%7Bheight%3A4px%3Bwidth%3A4px%3B%7D%0A%23lua-output%3A%3A-webkit-scrollbar-thumb%7Bbackground%3Avar(--line)%3B%7D%0A%2F*%20syntax%20highlight%20classes%20*%2F%0A.lua-key%7Bcolor%3Avar(--fg0)%3B%7D%0A.lua-str%7Bcolor%3Avar(--fg1)%3B%7D%0A.lua-num%7Bcolor%3Avar(--acc)%3B%7D%0A.lua-kw%7Bcolor%3Avar(--fg0)%3Bfont-weight%3A700%3B%7D%0A.lua-fn%7Bcolor%3Avar(--fg1)%3B%7D%0A.lua-comment%7Bcolor%3Avar(--fg2)%3Bfont-style%3Aitalic%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20GENERATION%20OVERLAY%20%E2%94%80%E2%94%80%20*%2F%0A%23gen-overlay%7B%0A%20%20position%3Afixed%3Binset%3A0%3Bz-index%3A500%3B%0A%20%20background%3Argba(0%2C0%2C0%2C0.75)%3Bbackdrop-filter%3Ablur(3px)%3B%0A%20%20display%3Anone%3Balign-items%3Acenter%3Bjustify-content%3Acenter%3B%0A%7D%0A%23gen-overlay.on%7Bdisplay%3Aflex%3B%7D%0A%23gen-modal%7B%0A%20%20background%3Avar(--bg1)%3Bborder%3A1px%20solid%20var(--line)%3Bborder-radius%3A3px%3B%0A%20%20padding%3A28px%2032px%3Bmin-width%3A340px%3Bdisplay%3Aflex%3Bflex-direction%3Acolumn%3Bgap%3A16px%3B%0A%20%20animation%3Amodal-in%200.18s%20ease-out%3B%0A%7D%0A%40keyframes%20modal-in%7Bfrom%7Bopacity%3A0%3Btransform%3Ascale(0.96)%7Dto%7Bopacity%3A1%3Btransform%3Ascale(1)%7D%7D%0A.gm-title%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A11px%3Bfont-weight%3A700%3Bletter-spacing%3A0.16em%3Bcolor%3Avar(--fg0)%3B%7D%0A.gm-grid%7Bdisplay%3Agrid%3Bgrid-template-columns%3A1fr%201fr%3Bgap%3A8px%3B%7D%0A.gm-cell%7Bbackground%3Avar(--bg2)%3Bpadding%3A8px%2010px%3Bborder-radius%3A2px%3B%7D%0A.gm-val%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A14px%3Bfont-weight%3A700%3Bcolor%3Avar(--fg0)%3B%7D%0A.gm-lbl%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A8px%3Bcolor%3Avar(--fg2)%3Bmargin-top%3A2px%3Bletter-spacing%3A0.1em%3B%7D%0A.gm-bar-track%7Bheight%3A3px%3Bbackground%3Avar(--line)%3Bborder-radius%3A2px%3Boverflow%3Ahidden%3B%7D%0A.gm-bar-fill%7Bheight%3A100%25%3Bbackground%3Avar(--fg0)%3Bborder-radius%3A2px%3Bwidth%3A0%25%3Btransition%3Awidth%200.12s%20ease-out%3B%7D%0A.gm-stage%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A10px%3Bcolor%3Avar(--fg1)%3B%7D%0A.gm-pct%7Bfont-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A22px%3Bfont-weight%3A700%3Bcolor%3Avar(--fg0)%3Btext-align%3Acenter%3B%7D%0A%0A%2F*%20%E2%94%80%E2%94%80%20TOAST%20%E2%94%80%E2%94%80%20*%2F%0A%23toast%7B%0A%20%20position%3Afixed%3Bbottom%3A18px%3Bright%3A18px%3B%0A%20%20background%3Avar(--bg3)%3Bborder%3A1px%20solid%20var(--line-hi)%3Bcolor%3Avar(--fg0)%3B%0A%20%20font-family%3A\'IBM%20Plex%20Mono\'%2Cmonospace%3Bfont-size%3A10px%3Bletter-spacing%3A0.08em%3B%0A%20%20padding%3A8px%2014px%3Bborder-radius%3A2px%3B%0A%20%20opacity%3A0%3Bpointer-events%3Anone%3Bz-index%3A999%3B%0A%20%20transition%3Aopacity%200.18s%2Ctransform%200.18s%3B%0A%20%20transform%3AtranslateY(8px)%3B%0A%7D%0A%23toast.on%7Bopacity%3A1%3Btransform%3AtranslateY(0)%3B%7D%0A%3C%2Fstyle%3E%0A%3C%2Fhead%3E%0A%3Cbody%3E%0A%0A%3Cdiv%20id%3D%22topbar%22%3E%0A%20%20%3Cdiv%20class%3D%22tb-wordmark%22%3ESpectraStudio%3C%2Fdiv%3E%0A%20%20%3Cdiv%20class%3D%22tb-slash%22%3E%2F%3C%2Fdiv%3E%0A%20%20%3Cdiv%20class%3D%22tb-sub%22%3ESPRITESHEET%20GENERATOR%20%26nbsp%3B%C2%B7%26nbsp%3B%20TRS%E2%84%A2%3C%2Fdiv%3E%0A%20%20%3Cdiv%20class%3D%22tb-spacer%22%3E%3C%2Fdiv%3E%0A%20%20%3Cdiv%20class%3D%22theme-switcher%22%3E%0A%20%20%20%20%3Cbutton%20class%3D%22theme-btn%20active%22%20data-t%3D%22dark%22%3EDARK%3C%2Fbutton%3E%0A%20%20%20%20%3Cbutton%20class%3D%22theme-btn%22%20data-t%3D%22light%22%3ELIGHT%3C%2Fbutton%3E%0A%20%20%20%20%3Cbutton%20class%3D%22theme-btn%22%20data-t%3D%22amoled%22%3EAMOLED%3C%2Fbutton%3E%0A%20%20%3C%2Fdiv%3E%0A%3C%2Fdiv%3E%0A%0A%3Cdiv%20id%3D%22body%22%3E%0A%3Cdiv%20id%3D%22sidebar%22%3E%0A%0A%20%20%3Cdiv%20id%3D%22dropzone%22%3E%0A%20%20%20%20%3Cinput%20type%3D%22file%22%20id%3D%22file-input%22%20accept%3D%22image%2Fgif%2Cvideo%2F*%22%3E%0A%20%20%20%20%3Cspan%20class%3D%22dz-icon%22%3E%E2%86%91%3C%2Fspan%3E%0A%20%20%20%20%3Cdiv%20class%3D%22dz-label%22%3EDROP%20FILE%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22dz-formats%22%3Egif%20%C2%B7%20mp4%20%C2%B7%20webm%20%C2%B7%20mov%20%C2%B7%20avi%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20id%3D%22file-name%22%3E%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%0A%20%20%3Cdiv%20class%3D%22s-group%22%20id%3D%22src-group%22%20style%3D%22display%3Anone%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22s-head%22%3E%3Cdiv%20class%3D%22s-head-dot%22%3E%3C%2Fdiv%3ESOURCE%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22s-body%22%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22stat-grid%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22stat-cell%22%3E%3Cdiv%20class%3D%22stat-val%22%20id%3D%22src-w%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22stat-lbl%22%3EWIDTH%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22stat-cell%22%3E%3Cdiv%20class%3D%22stat-val%22%20id%3D%22src-h%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22stat-lbl%22%3EHEIGHT%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22stat-cell%22%3E%3Cdiv%20class%3D%22stat-val%22%20id%3D%22src-frames%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22stat-lbl%22%3EFRAMES%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22stat-cell%22%3E%3Cdiv%20class%3D%22stat-val%22%20id%3D%22src-fps%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22stat-lbl%22%3ESRC%20FPS%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%0A%20%20%3Cdiv%20class%3D%22s-group%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22s-head%22%3E%3Cdiv%20class%3D%22s-head-dot%22%3E%3C%2Fdiv%3ESHEET%20SETTINGS%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22s-body%22%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22field%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22field-label%22%3EFRAME%20SIZE%20%E2%80%94%20longest%20edge%20(px)%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22number%22%20id%3D%22cell-size%22%20value%3D%22128%22%20min%3D%2216%22%20max%3D%221024%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22field-note%22%3EAspect%20ratio%20auto-detected%20from%20source%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22field%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22field-label%22%3EMAX%20SPRITESHEETS%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22number%22%20id%3D%22max-sheets%22%20value%3D%223%22%20min%3D%221%22%20max%3D%2220%22%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22field%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22field-label%22%3EOUTPUT%20FPS%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22number%22%20id%3D%22out-fps%22%20value%3D%2225%22%20min%3D%221%22%20max%3D%22120%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22field-note%22%3EFrame%20sample%20rate%20for%20video%20sources.%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22stat-grid%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22stat-cell%22%3E%3Cdiv%20class%3D%22stat-val%22%20id%3D%22c-fpr%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22stat-lbl%22%3EF%2FROW%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22stat-cell%22%3E%3Cdiv%20class%3D%22stat-val%22%20id%3D%22c-rows%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22stat-lbl%22%3EROWS%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22stat-cell%22%3E%3Cdiv%20class%3D%22stat-val%22%20id%3D%22c-fpsh%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22stat-lbl%22%3EF%2FSHEET%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22stat-cell%22%3E%3Cdiv%20class%3D%22stat-val%22%20id%3D%22c-total%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22stat-lbl%22%3ETOTAL%20F%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%0A%20%20%3Cdiv%20class%3D%22s-group%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22s-head%22%3E%3Cdiv%20class%3D%22s-head-dot%22%3E%3C%2Fdiv%3EREGISTRY%20COLOR%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22s-body%22%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22color-row%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22swatch-wrap%22%20id%3D%22swatch-wrap%22%20style%3D%22background%3A%23515151%22%3E%0A%20%20%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22color%22%20id%3D%22color-picker%22%20value%3D%22%23515151%22%3E%0A%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22text%22%20class%3D%22color-hex-inp%22%20id%3D%22color-hex%22%20value%3D%22%23515151%22%20maxlength%3D%227%22%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22palette%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22pal-dot%20active%22%20style%3D%22background%3A%23515151%22%20data-c%3D%22%23515151%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22pal-dot%22%20style%3D%22background%3A%23f0f0f0%22%20data-c%3D%22%23f0f0f0%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22pal-dot%22%20style%3D%22background%3A%23000000%3Bborder%3A1px%20solid%20%23444%22%20data-c%3D%22%23000000%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22pal-dot%22%20style%3D%22background%3A%231e64c8%22%20data-c%3D%22%231e64c8%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22pal-dot%22%20style%3D%22background%3A%23c83ca0%22%20data-c%3D%22%23c83ca0%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22pal-dot%22%20style%3D%22background%3A%238c28dc%22%20data-c%3D%22%238c28dc%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22pal-dot%22%20style%3D%22background%3A%23c82828%22%20data-c%3D%22%23c82828%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22pal-dot%22%20style%3D%22background%3A%23dcb414%22%20data-c%3D%22%23dcb414%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22pal-dot%22%20style%3D%22background%3A%2300c864%22%20data-c%3D%22%2300c864%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%0A%20%20%3Cdiv%20class%3D%22s-group%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22s-head%22%3E%3Cdiv%20class%3D%22s-head-dot%22%3E%3C%2Fdiv%3EREGISTRY%20ENTRY%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22s-body%22%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22field%22%3E%3Cdiv%20class%3D%22field-label%22%3EKEY%20NAME%3C%2Fdiv%3E%3Cinput%20type%3D%22text%22%20id%3D%22entry-name%22%20value%3D%22MyGif%22%20placeholder%3D%22MyGif%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22field%22%3E%3Cdiv%20class%3D%22field-label%22%3EDISPLAY%20NAME%3C%2Fdiv%3E%3Cinput%20type%3D%22text%22%20id%3D%22display-name%22%20value%3D%22My%20GIF%22%20placeholder%3D%22My%20GIF%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22field%22%3E%3Cdiv%20class%3D%22field-label%22%3ECATEGORY%3C%2Fdiv%3E%3Cinput%20type%3D%22text%22%20id%3D%22category%22%20value%3D%22general%22%20placeholder%3D%22general%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%0A%20%20%3Cdiv%20class%3D%22s-group%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22s-head%22%3E%3Cdiv%20class%3D%22s-head-dot%22%3E%3C%2Fdiv%3EGENERATE%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22s-body%22%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22prog-wrap%22%20id%3D%22prog-wrap%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22prog-label%22%20id%3D%22prog-label%22%3EProcessing...%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22prog-track%22%3E%3Cdiv%20class%3D%22prog-fill%22%20id%3D%22prog-fill%22%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cbutton%20class%3D%22btn%20btn-primary%20btn-full%22%20id%3D%22btn-gen%22%20disabled%3E%E2%96%B6%20%20GENERATE%20SHEETS%3C%2Fbutton%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%0A%3C%2Fdiv%3E%3C!--%20%2Fsidebar%20--%3E%0A%0A%3Cdiv%20id%3D%22main%22%3E%0A%20%20%3Cdiv%20id%3D%22preview-bar%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22pbar-label%22%3EPreview%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20id%3D%22sheet-tabs%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20id%3D%22view-controls%22%3E%0A%20%20%20%20%20%20%3Cbutton%20class%3D%22vc-btn%22%20id%3D%22vc-fit%22%3EFit%3C%2Fbutton%3E%0A%20%20%20%20%20%20%3Cbutton%20class%3D%22vc-btn%22%20id%3D%22vc-100%22%3E100%25%3C%2Fbutton%3E%0A%20%20%20%20%20%20%3Cbutton%20class%3D%22vc-btn%22%20id%3D%22vc-200%22%3E200%25%3C%2Fbutton%3E%0A%20%20%20%20%20%20%3Cbutton%20class%3D%22vc-btn%22%20id%3D%22vc-400%22%3E400%25%3C%2Fbutton%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22vc-sep%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cbutton%20class%3D%22vc-btn%22%20id%3D%22vc-reset%22%3EReset%3C%2Fbutton%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%0A%20%20%3Cdiv%20id%3D%22live-preview-wrap%22%3E%0A%20%20%20%20%3Ccanvas%20id%3D%22live-preview-canvas%22%3E%3C%2Fcanvas%3E%0A%20%20%20%20%3Cdiv%20id%3D%22live-controls%22%3E%0A%20%20%20%20%20%20%3Cbutton%20class%3D%22lc-btn%22%20id%3D%22lc-restart%22%20title%3D%22Restart%22%3E%E2%8F%AE%3C%2Fbutton%3E%0A%20%20%20%20%20%20%3Cbutton%20class%3D%22lc-btn%22%20id%3D%22lc-play%22%20title%3D%22Play%2FPause%22%3E%E2%96%B6%3C%2Fbutton%3E%0A%20%20%20%20%20%20%3Cbutton%20class%3D%22lc-btn%20active%22%20id%3D%22lc-loop%22%20title%3D%22Loop%22%3E%E2%9F%B3%3C%2Fbutton%3E%0A%20%20%20%20%20%20%3Cdiv%20id%3D%22live-info%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22li-item%22%3E%3Cspan%20class%3D%22li-val%22%20id%3D%22li-frame%22%3E0%2F0%3C%2Fspan%3E%3Cspan%20class%3D%22li-lbl%22%3EFRAME%3C%2Fspan%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22li-item%22%3E%3Cspan%20class%3D%22li-val%22%20id%3D%22li-fps%22%3E0%3C%2Fspan%3E%3Cspan%20class%3D%22li-lbl%22%3EFPS%3C%2Fspan%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%0A%20%20%3Cdiv%20id%3D%22canvas-area%22%3E%0A%20%20%20%20%3Cdiv%20id%3D%22canvas-viewport%22%3E%0A%20%20%20%20%20%20%3Cdiv%20id%3D%22canvas-transform%22%3E%0A%20%20%20%20%20%20%20%20%3Ccanvas%20id%3D%22preview-canvas%22%3E%3C%2Fcanvas%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20id%3D%22empty%22%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22empty-glyph%22%3E%5B%20%5D%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22empty-title%22%3ENo%20source%20loaded%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22empty-sub%22%3EDrop%20a%20GIF%20or%20video%20into%20the%20left%20panel.%3Cbr%3EConfigure%20settings%2C%20then%20generate.%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%0A%20%20%3Cdiv%20id%3D%22timeline%22%3E%3Cdiv%20id%3D%22timeline-inner%22%3E%3Cdiv%20id%3D%22tl-playhead%22%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%0A%20%20%3Cdiv%20id%3D%22statusbar%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22sb-item%22%3E%3Cspan%3EZOOM%3C%2Fspan%3E%3Cspan%20id%3D%22sb-zoom%22%3E100%25%3C%2Fspan%3E%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22sb-item%22%3E%3Cspan%3ESIZE%3C%2Fspan%3E%3Cspan%20id%3D%22sb-size%22%3E%E2%80%94%3C%2Fspan%3E%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22sb-item%22%3E%3Cspan%3EFRAMES%3C%2Fspan%3E%3Cspan%20id%3D%22sb-frames%22%3E%E2%80%94%3C%2Fspan%3E%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22sb-item%22%3E%3Cspan%3EFPS%3C%2Fspan%3E%3Cspan%20id%3D%22sb-fps%22%3E%E2%80%94%3C%2Fspan%3E%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22sb-item%22%3E%3Cspan%3ESHEETS%3C%2Fspan%3E%3Cspan%20id%3D%22sb-sheets%22%3E%E2%80%94%3C%2Fspan%3E%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22sb-item%22%3E%3Cspan%3ECURSOR%3C%2Fspan%3E%3Cspan%20id%3D%22sb-cursor%22%3E%E2%80%94%3C%2Fspan%3E%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22sb-spacer%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22sb-op%22%20id%3D%22sb-op%22%3Eidle%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%0A%20%20%3Cdiv%20id%3D%22output-strip%22%3E%0A%20%20%20%20%3Cdiv%20id%3D%22output-strip-head%22%3E%0A%20%20%20%20%20%20%3Cspan%3EOutput%3C%2Fspan%3E%0A%20%20%20%20%20%20%3Cdiv%20id%3D%22output-actions%22%3E%0A%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22btn%20btn-sm%22%20id%3D%22btn-dl%22%3E%E2%AC%87%20Download%20all%3C%2Fbutton%3E%0A%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22btn%20btn-sm%22%20id%3D%22btn-lua%22%3E%E2%8E%98%20Copy%20Lua%3C%2Fbutton%3E%0A%20%20%20%20%20%20%20%20%3Cbutton%20class%3D%22btn%20btn-sm%22%20id%3D%22btn-reset%22%3E%E2%9C%95%20Reset%3C%2Fbutton%3E%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20id%3D%22output-body%22%3E%3Cpre%20id%3D%22lua-output%22%3E%3C%2Fpre%3E%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%3C%2Fdiv%3E%3C!--%20%2Fmain%20--%3E%0A%3C%2Fdiv%3E%3C!--%20%2Fbody%20--%3E%0A%0A%3C!--%20Generation%20overlay%20--%3E%0A%3Cdiv%20id%3D%22gen-overlay%22%3E%0A%20%20%3Cdiv%20id%3D%22gen-modal%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22gm-title%22%3EGENERATING%20SPRITESHEETS%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22gm-pct%22%20id%3D%22gm-pct%22%3E0%25%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22gm-bar-track%22%3E%3Cdiv%20class%3D%22gm-bar-fill%22%20id%3D%22gm-bar%22%3E%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22gm-stage%22%20id%3D%22gm-stage%22%3EInitialising...%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22gm-grid%22%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22gm-cell%22%3E%3Cdiv%20class%3D%22gm-val%22%20id%3D%22gm-sheet%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22gm-lbl%22%3ESHEET%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22gm-cell%22%3E%3Cdiv%20class%3D%22gm-val%22%20id%3D%22gm-frame%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22gm-lbl%22%3EFRAME%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22gm-cell%22%3E%3Cdiv%20class%3D%22gm-val%22%20id%3D%22gm-elapsed%22%3E0s%3C%2Fdiv%3E%3Cdiv%20class%3D%22gm-lbl%22%3EELAPSED%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22gm-cell%22%3E%3Cdiv%20class%3D%22gm-val%22%20id%3D%22gm-eta%22%3E%E2%80%94%3C%2Fdiv%3E%3Cdiv%20class%3D%22gm-lbl%22%3EETA%3C%2Fdiv%3E%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%20%20%3C%2Fdiv%3E%0A%3C%2Fdiv%3E%0A%0A%3Cdiv%20id%3D%22toast%22%3E%3C%2Fdiv%3E%0A%3Ccanvas%20id%3D%22work-canvas%22%20style%3D%22display%3Anone%22%3E%3C%2Fcanvas%3E%0A%3Cvideo%20id%3D%22work-video%22%20style%3D%22display%3Anone%22%20muted%20crossorigin%3D%22anonymous%22%20preload%3D%22auto%22%3E%3C%2Fvideo%3E%0A%0A%3Cscript%3E%0A%2F%2F%20%E2%94%80%E2%94%80%20STATE%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Aconst%20S%20%3D%20%7B%0A%20%20file%3Anull%2C%20sourceFrames%3A%5B%5D%2C%20sourceFPS%3A25%2C%20sourceW%3A0%2C%20sourceH%3A0%2C%0A%20%20sheets%3A%5B%5D%2C%20sheetMeta%3A%5B%5D%2C%20activeTab%3A0%2C%0A%7D%3B%0A%0A%2F%2F%20viewport%20state%0Aconst%20V%20%3D%20%7B%20zoom%3A1%2C%20panX%3A0%2C%20panY%3A0%2C%20panning%3Afalse%2C%20lastX%3A0%2C%20lastY%3A0%2C%20spaceDown%3Afalse%20%7D%3B%0A%0A%2F%2F%20live%20preview%20state%0Aconst%20LP%20%3D%20%7B%20playing%3Afalse%2C%20loop%3Atrue%2C%20frame%3A0%2C%20raf%3Anull%2C%20lastT%3A0%2C%20frameDelay%3A40%20%7D%3B%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20ELEMENTS%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Aconst%20%24%20%3D%20id%20%3D%3E%20document.getElementById(id)%3B%0Aconst%20dropzone%3D%24(\'dropzone\')%2C%20fileInput%3D%24(\'file-input\')%2C%20fileName%3D%24(\'file-name\')%3B%0Aconst%20btnGen%3D%24(\'btn-gen\')%2C%20btnDl%3D%24(\'btn-dl\')%2C%20btnLua%3D%24(\'btn-lua\')%2C%20btnReset%3D%24(\'btn-reset\')%3B%0Aconst%20progWrap%3D%24(\'prog-wrap\')%2C%20progFill%3D%24(\'prog-fill\')%2C%20progLabel%3D%24(\'prog-label\')%3B%0Aconst%20previewCvs%3D%24(\'preview-canvas\')%2C%20emptyEl%3D%24(\'empty\')%2C%20sheetTabs%3D%24(\'sheet-tabs\')%3B%0Aconst%20luaOut%3D%24(\'lua-output\')%2C%20outActions%3D%24(\'output-actions\')%3B%0Aconst%20workCvs%3D%24(\'work-canvas\')%2C%20workVid%3D%24(\'work-video\')%2C%20workCtx%3DworkCvs.getContext(\'2d\')%3B%0Aconst%20colorPick%3D%24(\'color-picker\')%2C%20colorHex%3D%24(\'color-hex\')%2C%20swatchWrap%3D%24(\'swatch-wrap\')%3B%0Aconst%20toast%3D%24(\'toast\')%3B%0Aconst%20canvasTransform%3D%24(\'canvas-transform\')%2C%20canvasViewport%3D%24(\'canvas-viewport\')%3B%0Aconst%20liveCvs%3D%24(\'live-preview-canvas\')%2C%20liveWrap%3D%24(\'live-preview-wrap\')%3B%0Aconst%20lcPlay%3D%24(\'lc-play\')%2C%20lcLoop%3D%24(\'lc-loop\')%2C%20lcRestart%3D%24(\'lc-restart\')%3B%0Aconst%20liFrame%3D%24(\'li-frame\')%2C%20liFps%3D%24(\'li-fps\')%3B%0Aconst%20timeline%3D%24(\'timeline\')%2C%20tlInner%3D%24(\'timeline-inner\')%2C%20tlPlayhead%3D%24(\'tl-playhead\')%3B%0Aconst%20sbZoom%3D%24(\'sb-zoom\')%2C%20sbSize%3D%24(\'sb-size\')%2C%20sbFrames%3D%24(\'sb-frames\')%3B%0Aconst%20sbFps%3D%24(\'sb-fps\')%2C%20sbSheets%3D%24(\'sb-sheets\')%2C%20sbCursor%3D%24(\'sb-cursor\')%2C%20sbOp%3D%24(\'sb-op\')%3B%0Aconst%20genOverlay%3D%24(\'gen-overlay\')%2C%20gmPct%3D%24(\'gm-pct\')%2C%20gmBar%3D%24(\'gm-bar\')%3B%0Aconst%20gmStage%3D%24(\'gm-stage\')%2C%20gmSheet%3D%24(\'gm-sheet\')%2C%20gmFrame%3D%24(\'gm-frame\')%3B%0Aconst%20gmElapsed%3D%24(\'gm-elapsed\')%2C%20gmEta%3D%24(\'gm-eta\')%3B%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20THEME%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Adocument.querySelectorAll(\'.theme-btn\').forEach(b%20%3D%3E%20b.addEventListener(\'click\'%2C%20()%20%3D%3E%20%7B%0A%20%20document.documentElement.dataset.theme%20%3D%20b.dataset.t%3B%0A%20%20document.querySelectorAll(\'.theme-btn\').forEach(x%20%3D%3E%20x.classList.toggle(\'active\'%2C%20x%3D%3D%3Db))%3B%0A%7D))%3B%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20RIPPLE%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Adocument.querySelectorAll(\'.btn\').forEach(btn%20%3D%3E%20%7B%0A%20%20btn.addEventListener(\'click\'%2C%20e%20%3D%3E%20%7B%0A%20%20%20%20if%20(btn.disabled)%20return%3B%0A%20%20%20%20const%20r%20%3D%20document.createElement(\'span\')%3B%0A%20%20%20%20r.className%20%3D%20\'ripple\'%3B%0A%20%20%20%20const%20rect%20%3D%20btn.getBoundingClientRect()%3B%0A%20%20%20%20const%20sz%20%3D%20Math.max(rect.width%2C%20rect.height)%3B%0A%20%20%20%20r.style.cssText%20%3D%20%60width%3A%24%7Bsz%7Dpx%3Bheight%3A%24%7Bsz%7Dpx%3Bleft%3A%24%7Be.clientX-rect.left-sz%2F2%7Dpx%3Btop%3A%24%7Be.clientY-rect.top-sz%2F2%7Dpx%60%3B%0A%20%20%20%20btn.appendChild(r)%3B%0A%20%20%20%20setTimeout(()%20%3D%3E%20r.remove()%2C%20420)%3B%0A%20%20%7D)%3B%0A%7D)%3B%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20TOAST%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Alet%20toastT%3B%0Afunction%20showToast(msg)%20%7B%0A%20%20toast.textContent%20%3D%20msg%3B%20toast.classList.add(\'on\')%3B%0A%20%20clearTimeout(toastT)%3B%20toastT%20%3D%20setTimeout(()%20%3D%3E%20toast.classList.remove(\'on\')%2C%202200)%3B%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20DRAG%20%26%20DROP%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Adropzone.addEventListener(\'dragover\'%2C%20e%20%3D%3E%20%7B%20e.preventDefault()%3B%20dropzone.classList.add(\'drag-over\')%3B%20%7D)%3B%0Adropzone.addEventListener(\'dragleave\'%2C%20()%20%3D%3E%20dropzone.classList.remove(\'drag-over\'))%3B%0Adropzone.addEventListener(\'drop\'%2C%20e%20%3D%3E%20%7B%0A%20%20e.preventDefault()%3B%20dropzone.classList.remove(\'drag-over\')%3B%0A%20%20const%20f%20%3D%20e.dataTransfer.files%5B0%5D%3B%20if%20(f)%20loadFile(f)%3B%0A%7D)%3B%0AfileInput.addEventListener(\'change\'%2C%20()%20%3D%3E%20%7B%20if%20(fileInput.files%5B0%5D)%20loadFile(fileInput.files%5B0%5D)%3B%20%7D)%3B%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20RECALC%20%2B%20STAT%20BUMP%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Afunction%20animateStat(el%2C%20val)%20%7B%0A%20%20el.textContent%20%3D%20val%3B%0A%20%20el.classList.remove(\'bump\')%3B%0A%20%20requestAnimationFrame(()%20%3D%3E%20el.classList.add(\'bump\'))%3B%0A%7D%0Afunction%20recalc()%20%7B%0A%20%20const%20size%20%3D%20parseInt(%24(\'cell-size\').value)%20%7C%7C%20128%3B%0A%20%20const%20ms%20%20%20%3D%20parseInt(%24(\'max-sheets\').value)%20%7C%7C%201%3B%0A%20%20const%20ar%20%20%20%3D%20(S.sourceW%20%26%26%20S.sourceH)%20%3F%20S.sourceH%20%2F%20S.sourceW%20%3A%201%3B%0A%20%20const%20cw%20%20%20%3D%20size%2C%20ch%20%3D%20Math.round(size%20*%20ar)%3B%0A%20%20const%20fpr%20%20%3D%20Math.max(1%2C%20Math.floor(1024%20%2F%20cw))%3B%0A%20%20const%20rows%20%3D%20Math.max(1%2C%20Math.floor(1024%20%2F%20ch))%3B%0A%20%20const%20fps%20%20%3D%20fpr%20*%20rows%2C%20tot%20%3D%20fps%20*%20ms%3B%0A%20%20animateStat(%24(\'c-fpr\')%2C%20fpr)%3B%20animateStat(%24(\'c-rows\')%2C%20rows)%3B%0A%20%20animateStat(%24(\'c-fpsh\')%2C%20fps)%3B%20animateStat(%24(\'c-total\')%2C%20tot)%3B%0A%7D%0A%5B\'cell-size\'%2C\'max-sheets\'%2C\'out-fps\'%5D.forEach(id%20%3D%3E%20%24(id).addEventListener(\'input\'%2C%20recalc))%3B%0Arecalc()%3B%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20COLOR%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Afunction%20hexToRgb(h)%20%7B%0A%20%20h%3Dh.replace(\'%23\'%2C\'\')%3B%20if(h.length%3D%3D%3D3)%20h%3Dh.split(\'\').map(c%3D%3Ec%2Bc).join(\'\')%3B%0A%20%20const%20n%3DparseInt(h%2C16)%3B%20return%20%7Br%3A(n%3E%3E16)%26255%2Cg%3A(n%3E%3E8)%26255%2Cb%3An%26255%7D%3B%0A%7D%0Afunction%20setColor(hex)%20%7B%0A%20%20if(!%2F%5E%23%5B0-9a-fA-F%5D%7B6%7D%24%2F.test(hex))%20return%3B%0A%20%20colorPick.value%3Dhex%3B%20colorHex.value%3Dhex%3B%20swatchWrap.style.background%3Dhex%3B%0A%20%20document.querySelectorAll(\'.pal-dot\').forEach(d%3D%3Ed.classList.toggle(\'active\'%2Cd.dataset.c.toLowerCase()%3D%3D%3Dhex.toLowerCase()))%3B%0A%7D%0AcolorPick.addEventListener(\'input\'%2C%20()%20%3D%3E%20setColor(colorPick.value))%3B%0AcolorHex.addEventListener(\'change\'%2C%20()%20%3D%3E%20setColor(colorHex.value))%3B%0Adocument.querySelectorAll(\'.pal-dot\').forEach(d%20%3D%3E%20d.addEventListener(\'click\'%2C%20()%20%3D%3E%20setColor(d.dataset.c)))%3B%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20PROGRESS%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Afunction%20setProg(on%2C%20label%2C%20pct)%20%7B%0A%20%20progWrap.classList.toggle(\'on\'%2C%20on)%3B%0A%20%20if%20(label)%20progLabel.textContent%20%3D%20label%3B%0A%20%20progFill.style.width%20%3D%20(pct%20!%3D%3D%20undefined%20%3F%20pct%20%3A%200)%20%2B%20\'%25\'%3B%0A%20%20if%20(!on)%20progFill.style.width%20%3D%20\'0%25\'%3B%0A%7D%0Afunction%20setStatus(op)%20%7B%20sbOp.textContent%20%3D%20op%20%7C%7C%20\'idle\'%3B%20%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20GEN%20OVERLAY%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Alet%20genStart%20%3D%200%3B%0Afunction%20showGenOverlay()%20%7B%20genOverlay.classList.add(\'on\')%3B%20genStart%20%3D%20Date.now()%3B%20%7D%0Afunction%20hideGenOverlay()%20%7B%20genOverlay.classList.remove(\'on\')%3B%20%7D%0Afunction%20updateGenOverlay(pct%2C%20stage%2C%20sheet%2C%20frame%2C%20total)%20%7B%0A%20%20const%20p%20%3D%20Math.round(pct)%3B%0A%20%20gmPct.textContent%20%3D%20p%20%2B%20\'%25\'%3B%0A%20%20gmBar.style.width%20%3D%20p%20%2B%20\'%25\'%3B%0A%20%20gmStage.textContent%20%3D%20stage%3B%0A%20%20gmSheet.textContent%20%3D%20sheet%3B%0A%20%20gmFrame.textContent%20%3D%20frame%3B%0A%20%20const%20elapsed%20%3D%20(Date.now()%20-%20genStart)%20%2F%201000%3B%0A%20%20gmElapsed.textContent%20%3D%20elapsed.toFixed(1)%20%2B%20\'s\'%3B%0A%20%20if%20(pct%20%3E%200%20%26%26%20pct%20%3C%20100)%20%7B%0A%20%20%20%20const%20eta%20%3D%20(elapsed%20%2F%20(pct%20%2F%20100))%20-%20elapsed%3B%0A%20%20%20%20gmEta.textContent%20%3D%20eta.toFixed(1)%20%2B%20\'s\'%3B%0A%20%20%7D%20else%20%7B%20gmEta.textContent%20%3D%20\'%E2%80%94\'%3B%20%7D%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20LOAD%20FILE%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Aasync%20function%20loadFile(file)%20%7B%0A%20%20S.file%3Dfile%3B%20S.sheets%3D%5B%5D%3B%20S.sourceFrames%3D%5B%5D%3B%0A%20%20fileName.textContent%3Dfile.name%3B%0A%20%20const%20isGif%3Dfile.type%3D%3D%3D\'image%2Fgif\'%2C%20isVid%3Dfile.type.startsWith(\'video%2F\')%3B%0A%20%20if(!isGif%26%26!isVid)%7BshowToast(\'Unsupported%20file%20type\')%3Breturn%3B%7D%0A%20%20setProg(true%2C\'Loading...\')%3B%20setStatus(\'loading\')%3B%0A%20%20try%20%7B%0A%20%20%20%20if(isGif)%20await%20extractGif(file)%3B%20else%20await%20extractVideo(file)%3B%0A%20%20%20%20%24(\'src-group\').style.display%3D\'\'%3B%0A%20%20%20%20animateStat(%24(\'src-w\')%2C%20S.sourceW)%3B%20animateStat(%24(\'src-h\')%2C%20S.sourceH)%3B%0A%20%20%20%20animateStat(%24(\'src-frames\')%2C%20S.sourceFrames.length)%3B%0A%20%20%20%20animateStat(%24(\'src-fps\')%2C%20S.sourceFPS.toFixed(1))%3B%0A%20%20%20%20recalc()%3B%20btnGen.disabled%3Dfalse%3B%0A%20%20%20%20%2F%2F%20start%20live%20preview%0A%20%20%20%20startLivePreview()%3B%0A%20%20%20%20buildTimeline()%3B%0A%20%20%20%20setProg(false)%3B%20setStatus(\'ready\')%3B%0A%20%20%20%20sbSize.textContent%20%3D%20S.sourceW%20%2B%20\'%C3%97\'%20%2B%20S.sourceH%3B%0A%20%20%20%20sbFrames.textContent%20%3D%20S.sourceFrames.length%3B%0A%20%20%20%20sbFps.textContent%20%3D%20S.sourceFPS.toFixed(1)%3B%0A%20%20%20%20showToast(%60Loaded%20%24%7BS.sourceFrames.length%7D%20frames%60)%3B%0A%20%20%7D%20catch(e)%20%7B%20setProg(false)%3B%20setStatus(\'error\')%3B%20showToast(\'Error%3A%20\'%2Be.message)%3B%20console.error(e)%3B%20%7D%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20GIF%20DECODER%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Aasync%20function%20extractGif(file)%20%7B%0A%20%20const%20buf%3Dawait%20file.arrayBuffer()%2C%20bytes%3Dnew%20Uint8Array(buf)%3B%0A%20%20const%20frames%3DparseGIF(bytes)%3B%0A%20%20if(!frames.length)%20throw%20new%20Error(\'No%20frames%20decoded\')%3B%0A%20%20S.sourceW%3Dframes%5B0%5D.width%3B%20S.sourceH%3Dframes%5B0%5D.height%3B%0A%20%20const%20totalMs%3Dframes.reduce((a%2Cf)%3D%3Ea%2B(f.delay%7C%7C100)%2C0)%3B%0A%20%20S.sourceFPS%3Dframes.length%2F(totalMs%2F1000)%3B%0A%20%20S.sourceFrames%3Dframes.map(f%3D%3Enew%20ImageData(new%20Uint8ClampedArray(f.rgba)%2Cf.width%2Cf.height))%3B%0A%7D%0Afunction%20parseGIF(bytes)%20%7B%0A%20%20let%20pos%3D6%3B%0A%20%20const%20lw%3Dbytes%5Bpos%5D%7C(bytes%5Bpos%2B1%5D%3C%3C8)%3Bpos%2B%3D2%3B%0A%20%20const%20lh%3Dbytes%5Bpos%5D%7C(bytes%5Bpos%2B1%5D%3C%3C8)%3Bpos%2B%3D2%3B%0A%20%20const%20pk%3Dbytes%5Bpos%2B%2B%5D%3B%0A%20%20const%20hasGCT%3D(pk%3E%3E7)%261%2CgctSz%3D2%3C%3C(pk%267)%3Bpos%2B%3D2%3B%0A%20%20let%20gct%3Dnull%3B%0A%20%20if(hasGCT)%7Bgct%3D%5B%5D%3Bfor(let%20i%3D0%3Bi%3CgctSz%3Bi%2B%2B)%7Bgct.push(%5Bbytes%5Bpos%5D%2Cbytes%5Bpos%2B1%5D%2Cbytes%5Bpos%2B2%5D%5D)%3Bpos%2B%3D3%3B%7D%7D%0A%20%20const%20frames%3D%5B%5D%3Blet%20gce%3Dnull%3B%0A%20%20const%20cc%3Ddocument.createElement(\'canvas\')%3Bcc.width%3Dlw%3Bcc.height%3Dlh%3B%0A%20%20const%20cx%3Dcc.getContext(\'2d\')%3B%0A%20%20while(pos%3Cbytes.length)%7B%0A%20%20%20%20const%20s%3Dbytes%5Bpos%2B%2B%5D%3Bif(s%3D%3D%3D0x3B)break%3B%0A%20%20%20%20if(s%3D%3D%3D0x21)%7B%0A%20%20%20%20%20%20const%20lbl%3Dbytes%5Bpos%2B%2B%5D%3B%0A%20%20%20%20%20%20if(lbl%3D%3D%3D0xF9)%7B%0A%20%20%20%20%20%20%20%20pos%2B%2B%3Bconst%20pf%3Dbytes%5Bpos%2B%2B%5D%3B%0A%20%20%20%20%20%20%20%20const%20delay%3D(bytes%5Bpos%5D%7C(bytes%5Bpos%2B1%5D%3C%3C8))*10%3Bpos%2B%3D2%3B%0A%20%20%20%20%20%20%20%20const%20ti%3Dbytes%5Bpos%2B%2B%5D%3Bpos%2B%2B%3B%0A%20%20%20%20%20%20%20%20gce%3D%7BdisposalMethod%3A(pf%3E%3E2)%267%2CtransparentFlag%3Apf%261%2CtransparentIndex%3Ati%2Cdelay%3Adelay%7C%7C100%7D%3B%0A%20%20%20%20%20%20%7Delse%7Bwhile(true)%7Bconst%20bs%3Dbytes%5Bpos%2B%2B%5D%3Bif(bs%3D%3D%3D0)break%3Bpos%2B%3Dbs%3B%7D%7D%0A%20%20%20%20%20%20continue%3B%0A%20%20%20%20%7D%0A%20%20%20%20if(s%3D%3D%3D0x2C)%7B%0A%20%20%20%20%20%20const%20ix%3Dbytes%5Bpos%5D%7C(bytes%5Bpos%2B1%5D%3C%3C8)%3Bpos%2B%3D2%3B%0A%20%20%20%20%20%20const%20iy%3Dbytes%5Bpos%5D%7C(bytes%5Bpos%2B1%5D%3C%3C8)%3Bpos%2B%3D2%3B%0A%20%20%20%20%20%20const%20iw%3Dbytes%5Bpos%5D%7C(bytes%5Bpos%2B1%5D%3C%3C8)%3Bpos%2B%3D2%3B%0A%20%20%20%20%20%20const%20ih%3Dbytes%5Bpos%5D%7C(bytes%5Bpos%2B1%5D%3C%3C8)%3Bpos%2B%3D2%3B%0A%20%20%20%20%20%20const%20ip%3Dbytes%5Bpos%2B%2B%5D%3B%0A%20%20%20%20%20%20const%20hasLCT%3D(ip%3E%3E7)%261%2Cinterlaced%3D(ip%3E%3E6)%261%2ClctSz%3D2%3C%3C(ip%267)%3B%0A%20%20%20%20%20%20let%20ct%3Dgct%3B%0A%20%20%20%20%20%20if(hasLCT)%7Bct%3D%5B%5D%3Bfor(let%20i%3D0%3Bi%3ClctSz%3Bi%2B%2B)%7Bct.push(%5Bbytes%5Bpos%5D%2Cbytes%5Bpos%2B1%5D%2Cbytes%5Bpos%2B2%5D%5D)%3Bpos%2B%3D3%3B%7D%7D%0A%20%20%20%20%20%20const%20minLZW%3Dbytes%5Bpos%2B%2B%5D%3Bconst%20lzwData%3D%5B%5D%3B%0A%20%20%20%20%20%20while(true)%7Bconst%20bs%3Dbytes%5Bpos%2B%2B%5D%3Bif(bs%3D%3D%3D0)break%3Bfor(let%20i%3D0%3Bi%3Cbs%3Bi%2B%2B)lzwData.push(bytes%5Bpos%2B%2B%5D)%3B%7D%0A%20%20%20%20%20%20const%20indices%3DlzwDecode(new%20Uint8Array(lzwData)%2CminLZW)%3B%0A%20%20%20%20%20%20const%20disposal%3Dgce%3Fgce.disposalMethod%3A0%3B%0A%20%20%20%20%20%20let%20saved%3Dnull%3Bif(disposal%3D%3D%3D3)saved%3Dcx.getImageData(ix%2Ciy%2Ciw%2Cih)%3B%0A%20%20%20%20%20%20const%20fd_data%3Dcx.getImageData(0%2C0%2Clw%2Clh)%3Bconst%20fd%3Dfd_data.data%3B%0A%20%20%20%20%20%20const%20ti%3D(gce%26%26gce.transparentFlag)%3Fgce.transparentIndex%3A-1%3B%0A%20%20%20%20%20%20let%20si%3D0%3B%0A%20%20%20%20%20%20if(interlaced)%7B%0A%20%20%20%20%20%20%20%20const%20rowMap%3D%5B%5D%3B%0A%20%20%20%20%20%20%20%20for(const%20pass%20of%20%5B%7Bs%3A0%2Cst%3A8%7D%2C%7Bs%3A4%2Cst%3A8%7D%2C%7Bs%3A2%2Cst%3A4%7D%2C%7Bs%3A1%2Cst%3A2%7D%5D)%7B%0A%20%20%20%20%20%20%20%20%20%20for(let%20r%3Dpass.s%3Br%3Cih%3Br%2B%3Dpass.st)%7BrowMap%5Br%5D%3D%5B%5D%3Bfor(let%20c%3D0%3Bc%3Ciw%3Bc%2B%2B)rowMap%5Br%5D%5Bc%5D%3Dindices%5Bsi%2B%2B%5D%3B%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20for(let%20r%3D0%3Br%3Cih%3Br%2B%2B)for(let%20c%3D0%3Bc%3Ciw%3Bc%2B%2B)%7B%0A%20%20%20%20%20%20%20%20%20%20const%20pi%3DrowMap%5Br%5D%5Bc%5D%3Bif(pi%3D%3D%3Dti)continue%3B%0A%20%20%20%20%20%20%20%20%20%20const%20px%3D((iy%2Br)*lw%2B(ix%2Bc))*4%3Bconst%5BR%2CG%2CB%5D%3Dct%5Bpi%5D%7C%7C%5B0%2C0%2C0%5D%3B%0A%20%20%20%20%20%20%20%20%20%20fd%5Bpx%5D%3DR%3Bfd%5Bpx%2B1%5D%3DG%3Bfd%5Bpx%2B2%5D%3DB%3Bfd%5Bpx%2B3%5D%3D255%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%7Delse%7B%0A%20%20%20%20%20%20%20%20for(let%20r%3D0%3Br%3Cih%3Br%2B%2B)for(let%20c%3D0%3Bc%3Ciw%3Bc%2B%2B)%7B%0A%20%20%20%20%20%20%20%20%20%20const%20pi%3Dindices%5Bsi%2B%2B%5D%3Bif(pi%3D%3D%3Dti)continue%3B%0A%20%20%20%20%20%20%20%20%20%20const%20px%3D((iy%2Br)*lw%2B(ix%2Bc))*4%3Bconst%5BR%2CG%2CB%5D%3Dct%5Bpi%5D%7C%7C%5B0%2C0%2C0%5D%3B%0A%20%20%20%20%20%20%20%20%20%20fd%5Bpx%5D%3DR%3Bfd%5Bpx%2B1%5D%3DG%3Bfd%5Bpx%2B2%5D%3DB%3Bfd%5Bpx%2B3%5D%3D255%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20cx.putImageData(fd_data%2C0%2C0)%3B%0A%20%20%20%20%20%20const%20snap%3Dcx.getImageData(0%2C0%2Clw%2Clh)%3B%0A%20%20%20%20%20%20frames.push(%7Bwidth%3Alw%2Cheight%3Alh%2Crgba%3Asnap.data.slice()%2Cdelay%3Agce%3Fgce.delay%3A100%7D)%3B%0A%20%20%20%20%20%20if(disposal%3D%3D%3D2)cx.clearRect(ix%2Ciy%2Ciw%2Cih)%3B%0A%20%20%20%20%20%20else%20if(disposal%3D%3D%3D3%26%26saved)cx.putImageData(saved%2Cix%2Ciy)%3B%0A%20%20%20%20%20%20gce%3Dnull%3Bcontinue%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%20%20return%20frames%3B%0A%7D%0Afunction%20lzwDecode(data%2CminCode)%7B%0A%20%20const%20cc%3D1%3C%3CminCode%2Ceof%3Dcc%2B1%3Blet%20codeSize%3DminCode%2B1%2Cmask%3D(1%3C%3CcodeSize)-1%3B%0A%20%20const%20tbl%3D%5B%5D%3B%0A%20%20function%20init()%7Btbl.length%3D0%3Bfor(let%20i%3D0%3Bi%3Ccc%3Bi%2B%2B)tbl.push(%5Bi%5D)%3Btbl.push(%5Bcc%5D)%3Btbl.push(%5Beof%5D)%3BcodeSize%3DminCode%2B1%3Bmask%3D(1%3C%3CcodeSize)-1%3B%7D%0A%20%20init()%3Blet%20bp%3D0%3B%0A%20%20function%20read()%7Blet%20c%3D0%3Bfor(let%20i%3D0%3Bi%3CcodeSize%3Bi%2B%2B)%7Bconst%20by%3DMath.floor((bp%2Bi)%2F8)%2Cbi%3D(bp%2Bi)%258%3Bif(by%3Cdata.length%26%26(data%5Bby%5D%3E%3Ebi)%261)c%7C%3D1%3C%3Ci%3B%7Dbp%2B%3DcodeSize%3Breturn%20c%3B%7D%0A%20%20const%20out%3D%5B%5D%3Blet%20prev%3Dnull%3B%0A%20%20while(true)%7B%0A%20%20%20%20const%20code%3Dread()%3Bif(code%3D%3D%3Deof%7C%7Cbp%3Edata.length*8%2BcodeSize)break%3B%0A%20%20%20%20if(code%3D%3D%3Dcc)%7Binit()%3Bprev%3Dnull%3Bcontinue%3B%7D%0A%20%20%20%20let%20entry%3B%0A%20%20%20%20if(code%3Ctbl.length)entry%3Dtbl%5Bcode%5D%3B%0A%20%20%20%20else%20if(prev!%3D%3Dnull%26%26code%3D%3D%3Dtbl.length)entry%3Dprev.concat(prev%5B0%5D)%3B%0A%20%20%20%20else%20break%3B%0A%20%20%20%20for(const%20v%20of%20entry)out.push(v)%3B%0A%20%20%20%20if(prev!%3D%3Dnull)%7Btbl.push(prev.concat(entry%5B0%5D))%3Bif(tbl.length%3Emask%26%26codeSize%3C12)%7BcodeSize%2B%2B%3Bmask%3D(1%3C%3CcodeSize)-1%3B%7D%7D%0A%20%20%20%20prev%3Dentry%3B%0A%20%20%7D%0A%20%20return%20out%3B%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20VIDEO%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Aasync%20function%20extractVideo(file)%20%7B%0A%20%20return%20new%20Promise((resolve%2C%20reject)%20%3D%3E%20%7B%0A%20%20%20%20const%20url%20%3D%20URL.createObjectURL(file)%3B%0A%0A%20%20%20%20workVid.src%20%3D%20url%3B%0A%20%20%20%20workVid.preload%20%3D%20%22auto%22%3B%0A%20%20%20%20workVid.muted%20%3D%20true%3B%0A%0A%20%20%20%20workVid.addEventListener(%22loadedmetadata%22%2C%20async%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20try%20%7B%0A%20%20%20%20%20%20%20%20const%20duration%20%3D%20workVid.duration%3B%0A%20%20%20%20%20%20%20%20const%20fps%20%3D%20parseFloat(%24(%22out-fps%22).value)%20%7C%7C%2025%3B%0A%0A%20%20%20%20%20%20%20%20S.sourceFPS%20%3D%20fps%3B%0A%0A%20%20%20%20%20%20%20%20workCvs.width%20%3D%20workVid.videoWidth%20%7C%7C%20640%3B%0A%20%20%20%20%20%20%20%20workCvs.height%20%3D%20workVid.videoHeight%20%7C%7C%20480%3B%0A%0A%20%20%20%20%20%20%20%20S.sourceW%20%3D%20workCvs.width%3B%0A%20%20%20%20%20%20%20%20S.sourceH%20%3D%20workCvs.height%3B%0A%0A%20%20%20%20%20%20%20%20const%20total%20%3D%20Math.floor(duration%20*%20fps)%3B%0A%20%20%20%20%20%20%20%20S.sourceFrames%20%3D%20%5B%5D%3B%0A%0A%20%20%20%20%20%20%20%20for%20(let%20i%20%3D%200%3B%20i%20%3C%20total%3B%20i%2B%2B)%20%7B%0A%0A%20%20%20%20%20%20%20%20%20%20%2F%2F%20tiny%20epsilon%20prevents%20duplicate%20first%20frame%0A%20%20%20%20%20%20%20%20%20%20let%20t%20%3D%20i%20%2F%20fps%3B%0A%0A%20%20%20%20%20%20%20%20%20%20if%20(i%20%3D%3D%3D%200)%0A%20%20%20%20%20%20%20%20%20%20%20%20t%20%2B%3D%200.001%3B%0A%0A%20%20%20%20%20%20%20%20%20%20if%20(t%20%3E%20duration%20-%200.05)%0A%20%20%20%20%20%20%20%20%20%20%20%20t%20%3D%20duration%20-%200.05%3B%0A%0A%20%20%20%20%20%20%20%20%20%20await%20seekVid(workVid%2C%20t)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20workCtx.clearRect(0%2C%200%2C%20workCvs.width%2C%20workCvs.height)%3B%0A%20%20%20%20%20%20%20%20%20%20workCtx.drawImage(workVid%2C%200%2C%200)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20S.sourceFrames.push(%0A%20%20%20%20%20%20%20%20%20%20%20%20workCtx.getImageData(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%200%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%200%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20workCvs.width%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20workCvs.height%0A%20%20%20%20%20%20%20%20%20%20%20%20)%0A%20%20%20%20%20%20%20%20%20%20)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20setProg(%0A%20%20%20%20%20%20%20%20%20%20%20%20true%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%60Extracting%20frame%20%24%7Bi%20%2B%201%7D%20%2F%20%24%7Btotal%7D%60%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20((i%20%2B%201)%20%2F%20total)%20*%20100%0A%20%20%20%20%20%20%20%20%20%20)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20URL.revokeObjectURL(url)%3B%0A%20%20%20%20%20%20%20%20resolve()%3B%0A%0A%20%20%20%20%20%20%7D%20catch%20(err)%20%7B%0A%20%20%20%20%20%20%20%20URL.revokeObjectURL(url)%3B%0A%20%20%20%20%20%20%20%20reject(err)%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%2C%20%7B%20once%3A%20true%20%7D)%3B%0A%0A%20%20%20%20workVid.addEventListener(%22error%22%2C%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20URL.revokeObjectURL(url)%3B%0A%20%20%20%20%20%20reject(new%20Error(%22Video%20load%20failed.%22))%3B%0A%20%20%20%20%7D%2C%20%7B%20once%3A%20true%20%7D)%3B%0A%0A%20%20%20%20workVid.load()%3B%0A%20%20%7D)%3B%0A%7D%0A%0Afunction%20seekVid(video%2C%20time)%20%7B%0A%20%20return%20new%20Promise(resolve%20%3D%3E%20%7B%0A%0A%20%20%20%20const%20finish%20%3D%20()%20%3D%3E%20%7B%0A%20%20%20%20%20%20requestAnimationFrame(()%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20requestAnimationFrame(resolve)%3B%0A%20%20%20%20%20%20%7D)%3B%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20if%20(Math.abs(video.currentTime%20-%20time)%20%3C%200.0005)%20%7B%0A%20%20%20%20%20%20finish()%3B%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20%7D%0A%0A%20%20%20%20video.currentTime%20%3D%20time%3B%0A%0A%20%20%20%20video.addEventListener(%22seeked%22%2C%20finish%2C%20%7B%20once%3A%20true%20%7D)%3B%0A%0A%20%20%7D)%3B%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20LIVE%20PREVIEW%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Aconst%20livectx%20%3D%20liveCvs.getContext(\'2d\')%3B%0Afunction%20startLivePreview()%20%7B%0A%20%20if%20(!S.sourceFrames.length)%20return%3B%0A%20%20liveWrap.classList.add(\'on\')%3B%0A%20%20LP.frame%3D0%3B%20LP.playing%3Dtrue%3B%20LP.loop%3Dtrue%3B%0A%20%20LP.frameDelay%20%3D%201000%20%2F%20S.sourceFPS%3B%0A%20%20lcPlay.textContent%3D\'%E2%8F%B8\'%3B%20lcLoop.classList.add(\'active\')%3B%0A%20%20liveCvs.width%3DS.sourceW%3B%20liveCvs.height%3DS.sourceH%3B%0A%20%20cancelAnimationFrame(LP.raf)%3B%20LP.lastT%3Dperformance.now()%3B%0A%20%20LP.raf%3DrequestAnimationFrame(tickLive)%3B%0A%7D%0Afunction%20tickLive(now)%20%7B%0A%20%20if%20(!LP.playing)%20return%3B%0A%20%20if%20(now%20-%20LP.lastT%20%3E%3D%20LP.frameDelay)%20%7B%0A%20%20%20%20LP.lastT%3Dnow%3B%20LP.frame%2B%2B%3B%0A%20%20%20%20if%20(LP.frame%3E%3DS.sourceFrames.length)%20%7B%0A%20%20%20%20%20%20if%20(LP.loop)%20LP.frame%3D0%3B%20else%20%7B%20LP.playing%3Dfalse%3B%20lcPlay.textContent%3D\'%E2%96%B6\'%3B%20return%3B%20%7D%0A%20%20%20%20%7D%0A%20%20%20%20renderLiveFrame()%3B%0A%20%20%20%20updateTimeline()%3B%0A%20%20%7D%0A%20%20LP.raf%3DrequestAnimationFrame(tickLive)%3B%0A%7D%0Afunction%20renderLiveFrame()%20%7B%0A%20%20const%20f%3DS.sourceFrames%5BLP.frame%5D%3B%20if(!f)%20return%3B%0A%20%20livectx.putImageData(f%2C0%2C0)%3B%0A%20%20liFrame.textContent%3D%60%24%7BLP.frame%2B1%7D%2F%24%7BS.sourceFrames.length%7D%60%3B%0A%20%20liFps.textContent%3DS.sourceFPS.toFixed(0)%3B%0A%7D%0AlcPlay.addEventListener(\'click\'%2C()%3D%3E%7B%0A%20%20if(!S.sourceFrames.length)return%3B%0A%20%20LP.playing%3D!LP.playing%3B%20lcPlay.textContent%3DLP.playing%3F\'%E2%8F%B8\'%3A\'%E2%96%B6\'%3B%0A%20%20if(LP.playing)%7BLP.lastT%3Dperformance.now()%3BLP.raf%3DrequestAnimationFrame(tickLive)%3B%7D%0A%7D)%3B%0AlcLoop.addEventListener(\'click\'%2C()%3D%3E%7BLP.loop%3D!LP.loop%3BlcLoop.classList.toggle(\'active\'%2CLP.loop)%3B%7D)%3B%0AlcRestart.addEventListener(\'click\'%2C()%3D%3E%7B%0A%20%20if(!S.sourceFrames.length)return%3B%0A%20%20LP.frame%3D0%3BLP.playing%3Dtrue%3BlcPlay.textContent%3D\'%E2%8F%B8\'%3BLP.lastT%3Dperformance.now()%3B%0A%20%20cancelAnimationFrame(LP.raf)%3BLP.raf%3DrequestAnimationFrame(tickLive)%3BrenderLiveFrame()%3B%0A%7D)%3B%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20TIMELINE%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Afunction%20buildTimeline()%20%7B%0A%20%20if(!S.sourceFrames.length)%7Btimeline.classList.remove(\'on\')%3Breturn%3B%7D%0A%20%20timeline.classList.add(\'on\')%3B%0A%20%20%2F%2F%20clear%20old%20frames%20(keep%20playhead)%0A%20%20Array.from(tlInner.children).forEach(c%3D%3E%7Bif(c!%3D%3DtlPlayhead)c.remove()%3B%7D)%3B%0A%20%20S.sourceFrames.forEach((frame%2Ci)%3D%3E%7B%0A%20%20%20%20const%20el%3Ddocument.createElement(\'div\')%3Bel.className%3D\'tl-frame\'%3B%0A%20%20%20%20if(i%3D%3D%3DLP.frame)el.classList.add(\'active\')%3B%0A%20%20%20%20const%20c%3Ddocument.createElement(\'canvas\')%3Bc.width%3DS.sourceW%3Bc.height%3DS.sourceH%3B%0A%20%20%20%20c.getContext(\'2d\').putImageData(frame%2C0%2C0)%3B%0A%20%20%20%20el.appendChild(c)%3B%0A%20%20%20%20el.addEventListener(\'click\'%2C()%3D%3E%7BLP.frame%3Di%3BLP.playing%3Dfalse%3BlcPlay.textContent%3D\'%E2%96%B6\'%3BrenderLiveFrame()%3BupdateTimeline()%3B%7D)%3B%0A%20%20%20%20el.addEventListener(\'mouseenter\'%2C()%3D%3E%7BsbCursor.textContent%3D%60frame%20%24%7Bi%2B1%7D%60%3B%7D)%3B%0A%20%20%20%20tlInner.appendChild(el)%3B%0A%20%20%7D)%3B%0A%7D%0Afunction%20updateTimeline()%20%7B%0A%20%20const%20frames%3DtlInner.querySelectorAll(\'.tl-frame\')%3B%0A%20%20frames.forEach((f%2Ci)%3D%3Ef.classList.toggle(\'active\'%2Ci%3D%3D%3DLP.frame))%3B%0A%20%20const%20active%3Dframes%5BLP.frame%5D%3B%0A%20%20if(active)%7B%0A%20%20%20%20const%20left%3Dactive.offsetLeft%2Bactive.offsetWidth%2F2%3B%0A%20%20%20%20tlPlayhead.style.left%3Dleft%2B\'px\'%3B%0A%20%20%7D%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20VIEWPORT%20%2F%20PAN%20%2F%20ZOOM%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Afunction%20applyTransform()%20%7B%0A%20%20canvasTransform.style.transform%3D%60translate(%24%7BV.panX%7Dpx%2C%24%7BV.panY%7Dpx)%20scale(%24%7BV.zoom%7D)%60%3B%0A%20%20sbZoom.textContent%3DMath.round(V.zoom*100)%2B\'%25\'%3B%0A%7D%0Afunction%20fitToScreen()%20%7B%0A%20%20if(!previewCvs.width%7C%7C!previewCvs.height)return%3B%0A%20%20const%20area%3DcanvasViewport.getBoundingClientRect()%3B%0A%20%20const%20zx%3D(area.width-40)%2FpreviewCvs.width%2C%20zy%3D(area.height-40)%2FpreviewCvs.height%3B%0A%20%20V.zoom%3DMath.min(zx%2Czy%2C1)%3B%20V.panX%3D(area.width-previewCvs.width*V.zoom)%2F2%3B%20V.panY%3D(area.height-previewCvs.height*V.zoom)%2F2%3B%0A%20%20applyTransform()%3B%0A%7D%0Afunction%20setZoom(z)%20%7B%0A%20%20if(!previewCvs.width)return%3B%0A%20%20const%20area%3DcanvasViewport.getBoundingClientRect()%3B%0A%20%20V.zoom%3Dz%3B%20V.panX%3D(area.width-previewCvs.width*z)%2F2%3B%20V.panY%3D(area.height-previewCvs.height*z)%2F2%3B%0A%20%20applyTransform()%3B%0A%7D%0A%24(\'vc-fit\').addEventListener(\'click\'%2CfitToScreen)%3B%0A%24(\'vc-100\').addEventListener(\'click\'%2C()%3D%3EsetZoom(1))%3B%0A%24(\'vc-200\').addEventListener(\'click\'%2C()%3D%3EsetZoom(2))%3B%0A%24(\'vc-400\').addEventListener(\'click\'%2C()%3D%3EsetZoom(4))%3B%0A%24(\'vc-reset\').addEventListener(\'click\'%2C()%3D%3E%7BV.zoom%3D1%3BV.panX%3D0%3BV.panY%3D0%3BapplyTransform()%3B%7D)%3B%0A%0AcanvasViewport.addEventListener(\'wheel\'%2Ce%3D%3E%7B%0A%20%20e.preventDefault()%3B%0A%20%20const%20rect%3DcanvasViewport.getBoundingClientRect()%3B%0A%20%20const%20mx%3De.clientX-rect.left%2C%20my%3De.clientY-rect.top%3B%0A%20%20const%20oldZoom%3DV.zoom%3B%0A%20%20V.zoom%3DMath.max(0.1%2CMath.min(32%2CV.zoom*(e.deltaY%3C0%3F1.12%3A0.89)))%3B%0A%20%20V.panX%3Dmx-(mx-V.panX)*(V.zoom%2FoldZoom)%3B%0A%20%20V.panY%3Dmy-(my-V.panY)*(V.zoom%2FoldZoom)%3B%0A%20%20applyTransform()%3B%0A%7D%2C%7Bpassive%3Afalse%7D)%3B%0A%0AcanvasViewport.addEventListener(\'mousedown\'%2Ce%3D%3E%7B%0A%20%20if(e.button%3D%3D%3D1%7C%7C(e.button%3D%3D%3D0%26%26V.spaceDown))%7Be.preventDefault()%3BV.panning%3Dtrue%3BV.lastX%3De.clientX%3BV.lastY%3De.clientY%3BcanvasViewport.style.cursor%3D\'grabbing\'%3B%7D%0A%7D)%3B%0Awindow.addEventListener(\'mousemove\'%2Ce%3D%3E%7B%0A%20%20if(V.panning)%7BV.panX%2B%3De.clientX-V.lastX%3BV.panY%2B%3De.clientY-V.lastY%3BV.lastX%3De.clientX%3BV.lastY%3De.clientY%3BapplyTransform()%3B%7D%0A%20%20%2F%2F%20cursor%20position%0A%20%20if(previewCvs.style.display!%3D%3D\'none\')%7B%0A%20%20%20%20const%20rect%3DcanvasTransform.getBoundingClientRect()%3B%0A%20%20%20%20const%20cx%3DMath.floor((e.clientX-rect.left)%2FV.zoom)%2C%20cy%3DMath.floor((e.clientY-rect.top)%2FV.zoom)%3B%0A%20%20%20%20if(cx%3E%3D0%26%26cy%3E%3D0%26%26cx%3CpreviewCvs.width%26%26cy%3CpreviewCvs.height)%20sbCursor.textContent%3D%60%24%7Bcx%7D%2C%24%7Bcy%7D%60%3B%0A%20%20%7D%0A%7D)%3B%0Awindow.addEventListener(\'mouseup\'%2Ce%3D%3E%7Bif(e.button%3D%3D%3D1%7C%7CV.panning)%7BV.panning%3Dfalse%3BcanvasViewport.style.cursor%3DV.spaceDown%3F\'grab\'%3A\'default\'%3B%7D%7D)%3B%0Awindow.addEventListener(\'keydown\'%2Ce%3D%3E%7Bif(e.code%3D%3D%3D\'Space\'%26%26document.activeElement.tagName!%3D%3D\'INPUT\')%7Be.preventDefault()%3BV.spaceDown%3Dtrue%3BcanvasViewport.style.cursor%3D\'grab\'%3B%7D%7D)%3B%0Awindow.addEventListener(\'keyup\'%2Ce%3D%3E%7Bif(e.code%3D%3D%3D\'Space\')%7BV.spaceDown%3Dfalse%3Bif(!V.panning)canvasViewport.style.cursor%3D\'default\'%3B%7D%7D)%3B%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20GENERATE%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0AbtnGen.addEventListener(\'click\'%2Cgenerate)%3B%0Aasync%20function%20generate()%20%7B%0A%20%20if(!S.sourceFrames.length)return%3B%0A%20%20btnGen.disabled%3Dtrue%3B%20showGenOverlay()%3B%20setStatus(\'generating\')%3B%0A%20%20const%20size%3DparseInt(%24(\'cell-size\').value)%7C%7C128%3B%0A%20%20const%20ar%3D(S.sourceW%26%26S.sourceH)%3FS.sourceH%2FS.sourceW%3A1%3B%0A%20%20const%20cw%3Dsize%2C%20ch%3DMath.max(1%2CMath.round(size*ar))%3B%0A%20%20const%20ms%3DparseInt(%24(\'max-sheets\').value)%7C%7C1%3B%0A%20%20const%20fps%3DparseFloat(%24(\'out-fps\').value)%7C%7C25%3B%0A%20%20const%20fpr%3DMath.max(1%2CMath.floor(1024%2Fcw))%3B%0A%20%20const%20rows%3DMath.max(1%2CMath.floor(1024%2Fch))%3B%0A%20%20const%20fps2%3Dfpr*rows%3B%0A%20%20let%20frames%3DS.sourceFrames%3B%0A%20%20if(S.sourceFPS%26%26Math.abs(S.sourceFPS-fps)%3E0.5)frames%3Dresample(frames%2CS.sourceFPS%2Cfps)%3B%0A%20%20frames%3Dframes.slice(0%2Cfps2*ms)%3B%0A%20%20S.sheets%3D%5B%5D%3BS.sheetMeta%3D%5B%5D%3B%0A%20%20const%20numSheets%3DMath.min(ms%2CMath.ceil(frames.length%2Ffps2))%3B%0A%20%20for(let%20s%3D0%3Bs%3CnumSheets%3Bs%2B%2B)%7B%0A%20%20%20%20const%20sf%3Dframes.slice(s*fps2%2C(s%2B1)*fps2)%3B%0A%20%20%20%20const%20r%3DMath.ceil(sf.length%2Ffpr)%3B%0A%20%20%20%20const%20sc%3Ddocument.createElement(\'canvas\')%3B%0A%20%20%20%20sc.width%3DMath.min(fpr*cw%2C1024)%3Bsc.height%3DMath.min(r*ch%2C1024)%3B%0A%20%20%20%20const%20sctx%3Dsc.getContext(\'2d\')%3B%0A%20%20%20%20for(let%20fi%3D0%3Bfi%3Csf.length%3Bfi%2B%2B)%7B%0A%20%20%20%20%20%20const%20col%3Dfi%25fpr%2Crow%3DMath.floor(fi%2Ffpr)%3B%0A%20%20%20%20%20%20const%20pct%3D((s*fps2%2Bfi)%2Fframes.length)*100%3B%0A%20%20%20%20%20%20updateGenOverlay(pct%2C%60Sheet%20%24%7Bs%2B1%7D%20of%20%24%7BnumSheets%7D%60%2C%60%24%7Bs%2B1%7D%2F%24%7BnumSheets%7D%60%2C%60%24%7Bfi%2B1%7D%2F%24%7Bsf.length%7D%60%2Cframes.length)%3B%0A%20%20%20%20%20%20setProg(true%2C%60Sheet%20%24%7Bs%2B1%7D%2F%24%7BnumSheets%7D%20%C2%B7%20frame%20%24%7Bfi%2B1%7D%2F%24%7Bsf.length%7D%60%2Cpct)%3B%0A%20%20%20%20%20%20const%20src%3Dsf%5Bfi%5D%3B%0A%20%20%20%20%20%20const%20tmp%3Ddocument.createElement(\'canvas\')%3Btmp.width%3DS.sourceW%3Btmp.height%3DS.sourceH%3B%0A%20%20%20%20%20%20tmp.getContext(\'2d\').putImageData(src%2C0%2C0)%3B%0A%20%20%20%20%20%20const%20scaleX%3Dcw%2FS.sourceW%2CscaleY%3Dch%2FS.sourceH%2Cscale%3DMath.min(scaleX%2CscaleY)%3B%0A%20%20%20%20%20%20const%20dw%3DMath.round(S.sourceW*scale)%2Cdh%3DMath.round(S.sourceH*scale)%3B%0A%20%20%20%20%20%20const%20dx%3Dcol*cw%2BMath.floor((cw-dw)%2F2)%2Cdy%3Drow*ch%2BMath.floor((ch-dh)%2F2)%3B%0A%20%20%20%20%20%20sctx.drawImage(tmp%2Cdx%2Cdy%2Cdw%2Cdh)%3B%0A%20%20%20%20%20%20if(fi%256%3D%3D%3D0)await%20yld()%3B%0A%20%20%20%20%7D%0A%20%20%20%20S.sheets.push(sc)%3BS.sheetMeta.push(%7BframesPerRow%3Afpr%2Crows%3Ar%2Cframes%3Asf.length%2Cfps%7D)%3B%0A%20%20%7D%0A%20%20hideGenOverlay()%3BbuildTabs()%3BshowSheet(0)%3BbuildLua()%3B%0A%20%20outActions.classList.add(\'on\')%3BsetProg(false)%3BbtnGen.disabled%3Dfalse%3B%0A%20%20setStatus(\'done\')%3B%20sbSheets.textContent%3DS.sheets.length%3B%0A%20%20showToast(%60Generated%20%24%7BS.sheets.length%7D%20sheet(s)%60)%3B%0A%7D%0Aconst%20yld%3D()%3D%3Enew%20Promise(r%3D%3ErequestAnimationFrame(r))%3B%0Afunction%20resample(frames%2CsrcFps%2CdstFps)%7B%0A%20%20const%20out%3D%5B%5D%2Cratio%3DsrcFps%2FdstFps%2Ctot%3DMath.round(frames.length%2Fratio)%3B%0A%20%20for(let%20i%3D0%3Bi%3Ctot%3Bi%2B%2B)out.push(frames%5BMath.min(Math.round(i*ratio)%2Cframes.length-1)%5D)%3B%0A%20%20return%20out%3B%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20TABS%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Afunction%20buildTabs()%7B%0A%20%20sheetTabs.innerHTML%3D\'\'%3B%0A%20%20S.sheets.forEach((_%2Ci)%3D%3E%7B%0A%20%20%20%20const%20t%3Ddocument.createElement(\'button\')%3Bt.className%3D\'stab\'%2B(i%3D%3D%3D0%3F\'%20active\'%3A\'\')%3B%0A%20%20%20%20t.textContent%3D%60Sheet%20%24%7Bi%2B1%7D%60%3Bt.addEventListener(\'click\'%2C()%3D%3EshowSheet(i))%3B%0A%20%20%20%20sheetTabs.appendChild(t)%3B%0A%20%20%7D)%3B%0A%7D%0Afunction%20showSheet(idx)%7B%0A%20%20S.activeTab%3Didx%3B%0A%20%20document.querySelectorAll(\'.stab\').forEach((t%2Ci)%3D%3Et.classList.toggle(\'active\'%2Ci%3D%3D%3Didx))%3B%0A%20%20const%20sc%3DS.sheets%5Bidx%5D%3B%0A%20%20previewCvs.width%3Dsc.width%3BpreviewCvs.height%3Dsc.height%3B%0A%20%20previewCvs.getContext(\'2d\').drawImage(sc%2C0%2C0)%3B%0A%20%20previewCvs.style.display%3D\'block\'%3BemptyEl.style.display%3D\'none\'%3B%0A%20%20fitToScreen()%3B%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20LUA%20HIGHLIGHT%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0Afunction%20luaHighlight(code)%20%7B%0A%20%20return%20code%0A%20%20%20%20.replace(%2F%26%2Fg%2C\'%26amp%3B\').replace(%2F%3C%2Fg%2C\'%26lt%3B\').replace(%2F%3E%2Fg%2C\'%26gt%3B\')%0A%20%20%20%20.replace(%2F(--%5B%5E%5Cn%5D*)%2Fg%2C\'%3Cspan%20class%3D%22lua-comment%22%3E%241%3C%2Fspan%3E\')%0A%20%20%20%20.replace(%2F(%22(%3F%3A%5B%5E%22%5C%5C%5D%7C%5C%5C.)*%22)%2Fg%2C\'%3Cspan%20class%3D%22lua-str%22%3E%241%3C%2Fspan%3E\')%0A%20%20%20%20.replace(%2F%5Cb(%5Cd%2B(%3F%3A%5C.%5Cd%2B)%3F)%5Cb%2Fg%2C\'%3Cspan%20class%3D%22lua-num%22%3E%241%3C%2Fspan%3E\')%0A%20%20%20%20.replace(%2F%5Cb(local%7Creturn%7Cfunction%7Cend%7Cif%7Cthen%7Celse%7Cfor%7Cin%7Cdo%7Cnot%7Cand%7Cor%7Ctrue%7Cfalse%7Cnil)%5Cb%2Fg%2C\'%3Cspan%20class%3D%22lua-kw%22%3E%241%3C%2Fspan%3E\')%0A%20%20%20%20.replace(%2F%5Cb(%5BA-Z%5D%5Ba-z%5D%2B%5Cw*)%5Cs*%3D%2Fg%2C\'%3Cspan%20class%3D%22lua-key%22%3E%241%3C%2Fspan%3E%20%3D\')%0A%20%20%20%20.replace(%2F%5Cb(Color3%5C.fromRGB%7Crbxassetid)%5Cb%2Fg%2C\'%3Cspan%20class%3D%22lua-fn%22%3E%241%3C%2Fspan%3E\')%3B%0A%7D%0Afunction%20buildLua()%7B%0A%20%20const%20key%3D%24(\'entry-name\').value%7C%7C\'MyGif\'%2Cdisp%3D%24(\'display-name\').value%7C%7C\'My%20GIF\'%3B%0A%20%20const%20cat%3D%24(\'category\').value%7C%7C\'general\'%2Crgb%3DhexToRgb(colorHex.value)%3B%0A%20%20const%20fps%3DparseFloat(%24(\'out-fps\').value)%7C%7C25%3B%0A%20%20let%20lua%3D\'\'%3B%0A%20%20if(S.sheets.length%3D%3D%3D1)%7B%0A%20%20%20%20const%20m%3DS.sheetMeta%5B0%5D%3B%0A%20%20%20%20lua%3D%60%24%7Bkey%7D%20%3D%20%7B%5Cn%5CtName%20%20%20%20%20%20%20%20%20%3D%20%22%24%7Bdisp%7D%22%2C%5Cn%5CtCategory%20%20%20%20%20%3D%20%22%24%7Bcat%7D%22%2C%5Cn%5CtColor%20%20%20%20%20%20%20%20%3D%20Color3.fromRGB(%24%7Brgb.r%7D%2C%20%24%7Brgb.g%7D%2C%20%24%7Brgb.b%7D)%2C%5Cn%5CtImage%20%20%20%20%20%20%20%20%3D%20%22rbxassetid%3A%2F%2FUPLOAD_SHEET_1_HERE%22%2C%5Cn%5CtFPS%20%20%20%20%20%20%20%20%20%20%3D%20%24%7Bfps%7D%2C%5Cn%5CtFramesPerRow%20%3D%20%24%7Bm.framesPerRow%7D%2C%5Cn%5CtFrames%20%20%20%20%20%20%20%3D%20%24%7Bm.frames%7D%2C%5Cn%7D%2C%60%3B%0A%20%20%7Delse%7B%0A%20%20%20%20lua%3D%60%24%7Bkey%7D%20%3D%20%7B%5Cn%5CtName%20%20%20%20%20%3D%20%22%24%7Bdisp%7D%22%2C%5Cn%5CtCategory%20%3D%20%22%24%7Bcat%7D%22%2C%5Cn%5CtColor%20%20%20%20%3D%20Color3.fromRGB(%24%7Brgb.r%7D%2C%20%24%7Brgb.g%7D%2C%20%24%7Brgb.b%7D)%2C%5Cn%5CtSpriteSheets%20%3D%20%7B%5Cn%60%3B%0A%20%20%20%20S.sheetMeta.forEach((m%2Ci)%3D%3E%7Blua%2B%3D%60%5Ct%5Ct%7B%20Image%20%3D%20%22rbxassetid%3A%2F%2FUPLOAD_SHEET_%24%7Bi%2B1%7D_HERE%22%2C%20FPS%20%3D%20%24%7Bfps%7D%2C%20FramesPerRow%20%3D%20%24%7Bm.framesPerRow%7D%2C%20Frames%20%3D%20%24%7Bm.frames%7D%20%7D%2C%5Cn%60%3B%7D)%3B%0A%20%20%20%20lua%2B%3D%60%5Ct%7D%2C%5Cn%7D%2C%60%3B%0A%20%20%7D%0A%20%20luaOut.innerHTML%3DluaHighlight(lua)%3BluaOut.classList.add(\'on\')%3B%0A%7D%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20DOWNLOAD%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0AbtnDl.addEventListener(\'click\'%2Casync()%3D%3E%7B%0A%20%20const%20base%3D%24(\'entry-name\').value%7C%7C\'sheet\'%3B%0A%20%20for(let%20i%3D0%3Bi%3CS.sheets.length%3Bi%2B%2B)%7Bawait%20dlCanvas(S.sheets%5Bi%5D%2C%60%24%7Bbase%7D_%24%7Bi%2B1%7D.png%60)%3Bawait%20new%20Promise(r%3D%3EsetTimeout(r%2C80))%3B%7D%0A%20%20showToast(%60Downloaded%20%24%7BS.sheets.length%7D%20sheet(s)%60)%3B%0A%7D)%3B%0Afunction%20dlCanvas(canvas%2Cname)%7Breturn%20new%20Promise(r%3D%3E%7Bcanvas.toBlob(blob%3D%3E%7Bconst%20a%3Ddocument.createElement(\'a\')%3Ba.href%3DURL.createObjectURL(blob)%3Ba.download%3Dname%3Ba.click()%3BsetTimeout(()%3D%3EURL.revokeObjectURL(a.href)%2C1000)%3Br()%3B%7D%2C\'image%2Fpng\')%3B%7D)%3B%7D%0AbtnLua.addEventListener(\'click\'%2C()%3D%3E%7B%0A%20%20const%20text%3DluaOut.textContent%3B%0A%20%20navigator.clipboard.writeText(text).then(()%3D%3E%7B%0A%20%20%20%20btnLua.textContent%3D\'%E2%9C%93%20Copied\'%3BsetTimeout(()%3D%3EbtnLua.textContent%3D\'%E2%8E%98%20Copy%20Lua\'%2C1400)%3BshowToast(\'Copied\')%3B%0A%20%20%7D)%3B%0A%7D)%3B%0A%0A%2F%2F%20%E2%94%80%E2%94%80%20RESET%20%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0AbtnReset.addEventListener(\'click\'%2C()%3D%3E%7B%0A%20%20S.file%3Dnull%3BS.sourceFrames%3D%5B%5D%3BS.sheets%3D%5B%5D%3BS.sheetMeta%3D%5B%5D%3B%0A%20%20fileInput.value%3D\'\'%3BfileName.textContent%3D\'\'%3BbtnGen.disabled%3Dtrue%3B%0A%20%20previewCvs.style.display%3D\'none\'%3BemptyEl.style.display%3D\'\'%3B%0A%20%20sheetTabs.innerHTML%3D\'\'%3BluaOut.innerHTML%3D\'\'%3BluaOut.classList.remove(\'on\')%3B%0A%20%20outActions.classList.remove(\'on\')%3B%24(\'src-group\').style.display%3D\'none\'%3B%0A%20%20liveWrap.classList.remove(\'on\')%3Btimeline.classList.remove(\'on\')%3B%0A%20%20cancelAnimationFrame(LP.raf)%3BLP.playing%3Dfalse%3B%0A%20%20sbSize.textContent%3DsbFrames.textContent%3DsbFps.textContent%3DsbSheets.textContent%3D\'%E2%80%94\'%3B%0A%20%20setStatus(\'idle\')%3BsetProg(false)%3BV.zoom%3D1%3BV.panX%3D0%3BV.panY%3D0%3BapplyTransform()%3B%0A%20%20showToast(\'Reset\')%3B%0A%7D)%3B%0A%0Arecalc()%3B%20applyTransform()%3B%0A%3C%2Fscript%3E%0A%3C%2Fbody%3E%0A%3C%2Fhtml%3E'));
+// ── STATE ──────────────────────────────────────────────────────────────────
+const S = {
+  file:null, sourceFrames:[], sourceFPS:25, sourceW:0, sourceH:0,
+  sheets:[], sheetMeta:[], activeTab:0,
+};
+
+// viewport state
+const V = { zoom:1, panX:0, panY:0, panning:false, lastX:0, lastY:0, spaceDown:false };
+
+// live preview state
+const LP = { playing:false, loop:true, frame:0, raf:null, lastT:0, frameDelay:40 };
+
+// ── ELEMENTS ───────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const dropzone=$('dropzone'), fileInput=$('file-input'), fileName=$('file-name');
+const btnGen=$('btn-gen'), btnDl=$('btn-dl'), btnLua=$('btn-lua'), btnReset=$('btn-reset');
+const progWrap=$('prog-wrap'), progFill=$('prog-fill'), progLabel=$('prog-label');
+const previewCvs=$('preview-canvas'), emptyEl=$('empty'), sheetTabs=$('sheet-tabs');
+const luaOut=$('lua-output'), outActions=$('output-actions');
+const workCvs=$('work-canvas'), workVid=$('work-video'), workCtx=workCvs.getContext('2d');
+const colorPick=$('color-picker'), colorHex=$('color-hex'), swatchWrap=$('swatch-wrap');
+const toast=$('toast');
+const canvasTransform=$('canvas-transform'), canvasViewport=$('canvas-viewport');
+const liveCvs=$('live-preview-canvas'), liveWrap=$('live-preview-wrap');
+const lcPlay=$('lc-play'), lcLoop=$('lc-loop'), lcRestart=$('lc-restart');
+const liFrame=$('li-frame'), liFps=$('li-fps');
+const timeline=$('timeline'), tlInner=$('timeline-inner'), tlPlayhead=$('tl-playhead');
+const sbZoom=$('sb-zoom'), sbSize=$('sb-size'), sbFrames=$('sb-frames');
+const sbFps=$('sb-fps'), sbSheets=$('sb-sheets'), sbCursor=$('sb-cursor'), sbOp=$('sb-op');
+const genOverlay=$('gen-overlay'), gmPct=$('gm-pct'), gmBar=$('gm-bar');
+const gmStage=$('gm-stage'), gmSheet=$('gm-sheet'), gmFrame=$('gm-frame');
+const gmElapsed=$('gm-elapsed'), gmEta=$('gm-eta');
+
+// ── THEME ──────────────────────────────────────────────────────────────────
+document.querySelectorAll('.theme-btn').forEach(b => b.addEventListener('click', () => {
+  document.documentElement.dataset.theme = b.dataset.t;
+  document.querySelectorAll('.theme-btn').forEach(x => x.classList.toggle('active', x===b));
+}));
+
+// ── RIPPLE ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', e => {
+    if (btn.disabled) return;
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    const rect = btn.getBoundingClientRect();
+    const sz = Math.max(rect.width, rect.height);
+    r.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-rect.left-sz/2}px;top:${e.clientY-rect.top-sz/2}px`;
+    btn.appendChild(r);
+    setTimeout(() => r.remove(), 420);
+  });
+});
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+let toastT;
+function showToast(msg) {
+  toast.textContent = msg; toast.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => toast.classList.remove('on'), 2200);
+}
+
+// ── DRAG & DROP ────────────────────────────────────────────────────────────
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault(); dropzone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0]; if (f) loadFile(f);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
+
+// ── RECALC + STAT BUMP ────────────────────────────────────────────────────
+function animateStat(el, val) {
+  el.textContent = val;
+  el.classList.remove('bump');
+  requestAnimationFrame(() => el.classList.add('bump'));
+}
+function recalc() {
+  const size = parseInt($('cell-size').value) || 128;
+  const ms   = parseInt($('max-sheets').value) || 1;
+  const ar   = (S.sourceW && S.sourceH) ? S.sourceH / S.sourceW : 1;
+  const cw   = size, ch = Math.round(size * ar);
+  const fpr  = Math.max(1, Math.floor(1024 / cw));
+  const rows = Math.max(1, Math.floor(1024 / ch));
+  const fps  = fpr * rows, tot = fps * ms;
+  animateStat($('c-fpr'), fpr); animateStat($('c-rows'), rows);
+  animateStat($('c-fpsh'), fps); animateStat($('c-total'), tot);
+}
+['cell-size','max-sheets','out-fps'].forEach(id => $(id).addEventListener('input', recalc));
+recalc();
+
+// ── COLOR ──────────────────────────────────────────────────────────────────
+function hexToRgb(h) {
+  h=h.replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join('');
+  const n=parseInt(h,16); return {r:(n>>16)&255,g:(n>>8)&255,b:n&255};
+}
+function setColor(hex) {
+  if(!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
+  colorPick.value=hex; colorHex.value=hex; swatchWrap.style.background=hex;
+  document.querySelectorAll('.pal-dot').forEach(d=>d.classList.toggle('active',d.dataset.c.toLowerCase()===hex.toLowerCase()));
+}
+colorPick.addEventListener('input', () => setColor(colorPick.value));
+colorHex.addEventListener('change', () => setColor(colorHex.value));
+document.querySelectorAll('.pal-dot').forEach(d => d.addEventListener('click', () => setColor(d.dataset.c)));
+
+// ── PROGRESS ───────────────────────────────────────────────────────────────
+function setProg(on, label, pct) {
+  progWrap.classList.toggle('on', on);
+  if (label) progLabel.textContent = label;
+  progFill.style.width = (pct !== undefined ? pct : 0) + '%';
+  if (!on) progFill.style.width = '0%';
+}
+function setStatus(op) { sbOp.textContent = op || 'idle'; }
+
+// ── GEN OVERLAY ────────────────────────────────────────────────────────────
+let genStart = 0;
+function showGenOverlay() { genOverlay.classList.add('on'); genStart = Date.now(); }
+function hideGenOverlay() { genOverlay.classList.remove('on'); }
+function updateGenOverlay(pct, stage, sheet, frame, total) {
+  const p = Math.round(pct);
+  gmPct.textContent = p + '%';
+  gmBar.style.width = p + '%';
+  gmStage.textContent = stage;
+  gmSheet.textContent = sheet;
+  gmFrame.textContent = frame;
+  const elapsed = (Date.now() - genStart) / 1000;
+  gmElapsed.textContent = elapsed.toFixed(1) + 's';
+  if (pct > 0 && pct < 100) {
+    const eta = (elapsed / (pct / 100)) - elapsed;
+    gmEta.textContent = eta.toFixed(1) + 's';
+  } else { gmEta.textContent = '—'; }
+}
+
+// ── LOAD FILE ──────────────────────────────────────────────────────────────
+async function loadFile(file) {
+  S.file=file; S.sheets=[]; S.sourceFrames=[];
+  fileName.textContent=file.name;
+  const isGif=file.type==='image/gif', isVid=file.type.startsWith('video/');
+  if(!isGif&&!isVid){showToast('Unsupported file type');return;}
+  setProg(true,'Loading...'); setStatus('loading');
+  try {
+    if(isGif) await extractGif(file); else await extractVideo(file);
+    $('src-group').style.display='';
+    animateStat($('src-w'), S.sourceW); animateStat($('src-h'), S.sourceH);
+    animateStat($('src-frames'), S.sourceFrames.length);
+    animateStat($('src-fps'), S.sourceFPS.toFixed(1));
+    recalc(); btnGen.disabled=false;
+    // start live preview
+    startLivePreview();
+    buildTimeline();
+    setProg(false); setStatus('ready');
+    sbSize.textContent = S.sourceW + '×' + S.sourceH;
+    sbFrames.textContent = S.sourceFrames.length;
+    sbFps.textContent = S.sourceFPS.toFixed(1);
+    showToast(`Loaded ${S.sourceFrames.length} frames`);
+  } catch(e) { setProg(false); setStatus('error'); showToast('Error: '+e.message); console.error(e); }
+}
+
+// ── GIF DECODER ────────────────────────────────────────────────────────────
+async function extractGif(file) {
+  const buf=await file.arrayBuffer(), bytes=new Uint8Array(buf);
+  const frames=parseGIF(bytes);
+  if(!frames.length) throw new Error('No frames decoded');
+  S.sourceW=frames[0].width; S.sourceH=frames[0].height;
+  const totalMs=frames.reduce((a,f)=>a+(f.delay||100),0);
+  S.sourceFPS=frames.length/(totalMs/1000);
+  S.sourceFrames=frames.map(f=>new ImageData(new Uint8ClampedArray(f.rgba),f.width,f.height));
+}
+function parseGIF(bytes) {
+  let pos=6;
+  const lw=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
+  const lh=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
+  const pk=bytes[pos++];
+  const hasGCT=(pk>>7)&1,gctSz=2<<(pk&7);pos+=2;
+  let gct=null;
+  if(hasGCT){gct=[];for(let i=0;i<gctSz;i++){gct.push([bytes[pos],bytes[pos+1],bytes[pos+2]]);pos+=3;}}
+  const frames=[];let gce=null;
+  const cc=document.createElement('canvas');cc.width=lw;cc.height=lh;
+  const cx=cc.getContext('2d');
+  while(pos<bytes.length){
+    const s=bytes[pos++];if(s===0x3B)break;
+    if(s===0x21){
+      const lbl=bytes[pos++];
+      if(lbl===0xF9){
+        pos++;const pf=bytes[pos++];
+        const delay=(bytes[pos]|(bytes[pos+1]<<8))*10;pos+=2;
+        const ti=bytes[pos++];pos++;
+        gce={disposalMethod:(pf>>2)&7,transparentFlag:pf&1,transparentIndex:ti,delay:delay||100};
+      }else{while(true){const bs=bytes[pos++];if(bs===0)break;pos+=bs;}}
+      continue;
+    }
+    if(s===0x2C){
+      const ix=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
+      const iy=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
+      const iw=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
+      const ih=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
+      const ip=bytes[pos++];
+      const hasLCT=(ip>>7)&1,interlaced=(ip>>6)&1,lctSz=2<<(ip&7);
+      let ct=gct;
+      if(hasLCT){ct=[];for(let i=0;i<lctSz;i++){ct.push([bytes[pos],bytes[pos+1],bytes[pos+2]]);pos+=3;}}
+      const minLZW=bytes[pos++];const lzwData=[];
+      while(true){const bs=bytes[pos++];if(bs===0)break;for(let i=0;i<bs;i++)lzwData.push(bytes[pos++]);}
+      const indices=lzwDecode(new Uint8Array(lzwData),minLZW);
+      const disposal=gce?gce.disposalMethod:0;
+      let saved=null;if(disposal===3)saved=cx.getImageData(ix,iy,iw,ih);
+      const fd_data=cx.getImageData(0,0,lw,lh);const fd=fd_data.data;
+      const ti=(gce&&gce.transparentFlag)?gce.transparentIndex:-1;
+      let si=0;
+      if(interlaced){
+        const rowMap=[];
+        for(const pass of [{s:0,st:8},{s:4,st:8},{s:2,st:4},{s:1,st:2}]){
+          for(let r=pass.s;r<ih;r+=pass.st){rowMap[r]=[];for(let c=0;c<iw;c++)rowMap[r][c]=indices[si++];}
+        }
+        for(let r=0;r<ih;r++)for(let c=0;c<iw;c++){
+          const pi=rowMap[r][c];if(pi===ti)continue;
+          const px=((iy+r)*lw+(ix+c))*4;const[R,G,B]=ct[pi]||[0,0,0];
+          fd[px]=R;fd[px+1]=G;fd[px+2]=B;fd[px+3]=255;
+        }
+      }else{
+        for(let r=0;r<ih;r++)for(let c=0;c<iw;c++){
+          const pi=indices[si++];if(pi===ti)continue;
+          const px=((iy+r)*lw+(ix+c))*4;const[R,G,B]=ct[pi]||[0,0,0];
+          fd[px]=R;fd[px+1]=G;fd[px+2]=B;fd[px+3]=255;
+        }
+      }
+      cx.putImageData(fd_data,0,0);
+      const snap=cx.getImageData(0,0,lw,lh);
+      frames.push({width:lw,height:lh,rgba:snap.data.slice(),delay:gce?gce.delay:100});
+      if(disposal===2)cx.clearRect(ix,iy,iw,ih);
+      else if(disposal===3&&saved)cx.putImageData(saved,ix,iy);
+      gce=null;continue;
+    }
+  }
+  return frames;
+}
+function lzwDecode(data,minCode){
+  const cc=1<<minCode,eof=cc+1;let codeSize=minCode+1,mask=(1<<codeSize)-1;
+  const tbl=[];
+  function init(){tbl.length=0;for(let i=0;i<cc;i++)tbl.push([i]);tbl.push([cc]);tbl.push([eof]);codeSize=minCode+1;mask=(1<<codeSize)-1;}
+  init();let bp=0;
+  function read(){let c=0;for(let i=0;i<codeSize;i++){const by=Math.floor((bp+i)/8),bi=(bp+i)%8;if(by<data.length&&(data[by]>>bi)&1)c|=1<<i;}bp+=codeSize;return c;}
+  const out=[];let prev=null;
+  while(true){
+    const code=read();if(code===eof||bp>data.length*8+codeSize)break;
+    if(code===cc){init();prev=null;continue;}
+    let entry;
+    if(code<tbl.length)entry=tbl[code];
+    else if(prev!==null&&code===tbl.length)entry=prev.concat(prev[0]);
+    else break;
+    for(const v of entry)out.push(v);
+    if(prev!==null){tbl.push(prev.concat(entry[0]));if(tbl.length>mask&&codeSize<12){codeSize++;mask=(1<<codeSize)-1;}}
+    prev=entry;
+  }
+  return out;
+}
+
+// ── VIDEO ──────────────────────────────────────────────────────────────────
+async function extractVideo(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+
+    workVid.src = url;
+    workVid.preload = "auto";
+    workVid.muted = true;
+
+    workVid.addEventListener("loadedmetadata", async () => {
+      try {
+        const duration = workVid.duration;
+        const fps = parseFloat($("out-fps").value) || 25;
+
+        S.sourceFPS = fps;
+
+        workCvs.width = workVid.videoWidth || 640;
+        workCvs.height = workVid.videoHeight || 480;
+
+        S.sourceW = workCvs.width;
+        S.sourceH = workCvs.height;
+
+        const total = Math.floor(duration * fps);
+        S.sourceFrames = [];
+
+        for (let i = 0; i < total; i++) {
+
+          // tiny epsilon prevents duplicate first frame
+          let t = i / fps;
+
+          if (i === 0)
+            t += 0.001;
+
+          if (t > duration - 0.05)
+            t = duration - 0.05;
+
+          await seekVid(workVid, t);
+
+          workCtx.clearRect(0, 0, workCvs.width, workCvs.height);
+          workCtx.drawImage(workVid, 0, 0);
+
+          S.sourceFrames.push(
+            workCtx.getImageData(
+              0,
+              0,
+              workCvs.width,
+              workCvs.height
+            )
+          );
+
+          setProg(
+            true,
+            `Extracting frame ${i + 1} / ${total}`,
+            ((i + 1) / total) * 100
+          );
+        }
+
+        URL.revokeObjectURL(url);
+        resolve();
+
+      } catch (err) {
+        URL.revokeObjectURL(url);
+        reject(err);
+      }
+    }, { once: true });
+
+    workVid.addEventListener("error", () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Video load failed."));
+    }, { once: true });
+
+    workVid.load();
+  });
+}
+
+function seekVid(video, time) {
+  return new Promise(resolve => {
+
+    const finish = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(resolve);
+      });
+    };
+
+    if (Math.abs(video.currentTime - time) < 0.0005) {
+      finish();
+      return;
+    }
+
+    video.currentTime = time;
+
+    video.addEventListener("seeked", finish, { once: true });
+
+  });
+}
+
+// ── LIVE PREVIEW ───────────────────────────────────────────────────────────
+const livectx = liveCvs.getContext('2d');
+function startLivePreview() {
+  if (!S.sourceFrames.length) return;
+  liveWrap.classList.add('on');
+  LP.frame=0; LP.playing=true; LP.loop=true;
+  LP.frameDelay = 1000 / S.sourceFPS;
+  lcPlay.textContent='⏸'; lcLoop.classList.add('active');
+  liveCvs.width=S.sourceW; liveCvs.height=S.sourceH;
+  cancelAnimationFrame(LP.raf); LP.lastT=performance.now();
+  LP.raf=requestAnimationFrame(tickLive);
+}
+function tickLive(now) {
+  if (!LP.playing) return;
+  if (now - LP.lastT >= LP.frameDelay) {
+    LP.lastT=now; LP.frame++;
+    if (LP.frame>=S.sourceFrames.length) {
+      if (LP.loop) LP.frame=0; else { LP.playing=false; lcPlay.textContent='▶'; return; }
+    }
+    renderLiveFrame();
+    updateTimeline();
+  }
+  LP.raf=requestAnimationFrame(tickLive);
+}
+function renderLiveFrame() {
+  const f=S.sourceFrames[LP.frame]; if(!f) return;
+  livectx.putImageData(f,0,0);
+  liFrame.textContent=`${LP.frame+1}/${S.sourceFrames.length}`;
+  liFps.textContent=S.sourceFPS.toFixed(0);
+}
+lcPlay.addEventListener('click',()=>{
+  if(!S.sourceFrames.length)return;
+  LP.playing=!LP.playing; lcPlay.textContent=LP.playing?'⏸':'▶';
+  if(LP.playing){LP.lastT=performance.now();LP.raf=requestAnimationFrame(tickLive);}
+});
+lcLoop.addEventListener('click',()=>{LP.loop=!LP.loop;lcLoop.classList.toggle('active',LP.loop);});
+lcRestart.addEventListener('click',()=>{
+  if(!S.sourceFrames.length)return;
+  LP.frame=0;LP.playing=true;lcPlay.textContent='⏸';LP.lastT=performance.now();
+  cancelAnimationFrame(LP.raf);LP.raf=requestAnimationFrame(tickLive);renderLiveFrame();
+});
+
+// ── TIMELINE ───────────────────────────────────────────────────────────────
+function buildTimeline() {
+  if(!S.sourceFrames.length){timeline.classList.remove('on');return;}
+  timeline.classList.add('on');
+  // clear old frames (keep playhead)
+  Array.from(tlInner.children).forEach(c=>{if(c!==tlPlayhead)c.remove();});
+  S.sourceFrames.forEach((frame,i)=>{
+    const el=document.createElement('div');el.className='tl-frame';
+    if(i===LP.frame)el.classList.add('active');
+    const c=document.createElement('canvas');c.width=S.sourceW;c.height=S.sourceH;
+    c.getContext('2d').putImageData(frame,0,0);
+    el.appendChild(c);
+    el.addEventListener('click',()=>{LP.frame=i;LP.playing=false;lcPlay.textContent='▶';renderLiveFrame();updateTimeline();});
+    el.addEventListener('mouseenter',()=>{sbCursor.textContent=`frame ${i+1}`;});
+    tlInner.appendChild(el);
+  });
+}
+function updateTimeline() {
+  const frames=tlInner.querySelectorAll('.tl-frame');
+  frames.forEach((f,i)=>f.classList.toggle('active',i===LP.frame));
+  const active=frames[LP.frame];
+  if(active){
+    const left=active.offsetLeft+active.offsetWidth/2;
+    tlPlayhead.style.left=left+'px';
+  }
+}
+
+// ── VIEWPORT / PAN / ZOOM ─────────────────────────────────────────────────
+function applyTransform() {
+  canvasTransform.style.transform=`translate(${V.panX}px,${V.panY}px) scale(${V.zoom})`;
+  sbZoom.textContent=Math.round(V.zoom*100)+'%';
+}
+function fitToScreen() {
+  if(!previewCvs.width||!previewCvs.height)return;
+  const area=canvasViewport.getBoundingClientRect();
+  const zx=(area.width-40)/previewCvs.width, zy=(area.height-40)/previewCvs.height;
+  V.zoom=Math.min(zx,zy,1); V.panX=(area.width-previewCvs.width*V.zoom)/2; V.panY=(area.height-previewCvs.height*V.zoom)/2;
+  applyTransform();
+}
+function setZoom(z) {
+  if(!previewCvs.width)return;
+  const area=canvasViewport.getBoundingClientRect();
+  V.zoom=z; V.panX=(area.width-previewCvs.width*z)/2; V.panY=(area.height-previewCvs.height*z)/2;
+  applyTransform();
+}
+$('vc-fit').addEventListener('click',fitToScreen);
+$('vc-100').addEventListener('click',()=>setZoom(1));
+$('vc-200').addEventListener('click',()=>setZoom(2));
+$('vc-400').addEventListener('click',()=>setZoom(4));
+$('vc-reset').addEventListener('click',()=>{V.zoom=1;V.panX=0;V.panY=0;applyTransform();});
+
+canvasViewport.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const rect=canvasViewport.getBoundingClientRect();
+  const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  const oldZoom=V.zoom;
+  V.zoom=Math.max(0.1,Math.min(32,V.zoom*(e.deltaY<0?1.12:0.89)));
+  V.panX=mx-(mx-V.panX)*(V.zoom/oldZoom);
+  V.panY=my-(my-V.panY)*(V.zoom/oldZoom);
+  applyTransform();
+},{passive:false});
+
+canvasViewport.addEventListener('mousedown',e=>{
+  if(e.button===1||(e.button===0&&V.spaceDown)){e.preventDefault();V.panning=true;V.lastX=e.clientX;V.lastY=e.clientY;canvasViewport.style.cursor='grabbing';}
+});
+window.addEventListener('mousemove',e=>{
+  if(V.panning){V.panX+=e.clientX-V.lastX;V.panY+=e.clientY-V.lastY;V.lastX=e.clientX;V.lastY=e.clientY;applyTransform();}
+  // cursor position
+  if(previewCvs.style.display!=='none'){
+    const rect=canvasTransform.getBoundingClientRect();
+    const cx=Math.floor((e.clientX-rect.left)/V.zoom), cy=Math.floor((e.clientY-rect.top)/V.zoom);
+    if(cx>=0&&cy>=0&&cx<previewCvs.width&&cy<previewCvs.height) sbCursor.textContent=`${cx},${cy}`;
+  }
+});
+window.addEventListener('mouseup',e=>{if(e.button===1||V.panning){V.panning=false;canvasViewport.style.cursor=V.spaceDown?'grab':'default';}});
+window.addEventListener('keydown',e=>{if(e.code==='Space'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();V.spaceDown=true;canvasViewport.style.cursor='grab';}});
+window.addEventListener('keyup',e=>{if(e.code==='Space'){V.spaceDown=false;if(!V.panning)canvasViewport.style.cursor='default';}});
+
+// ── GENERATE ───────────────────────────────────────────────────────────────
+btnGen.addEventListener('click',generate);
+async function generate() {
+  if(!S.sourceFrames.length)return;
+  btnGen.disabled=true; showGenOverlay(); setStatus('generating');
+  const size=parseInt($('cell-size').value)||128;
+  const ar=(S.sourceW&&S.sourceH)?S.sourceH/S.sourceW:1;
+  const cw=size, ch=Math.max(1,Math.round(size*ar));
+  const ms=parseInt($('max-sheets').value)||1;
+  const fps=parseFloat($('out-fps').value)||25;
+  const fpr=Math.max(1,Math.floor(1024/cw));
+  const rows=Math.max(1,Math.floor(1024/ch));
+  const fps2=fpr*rows;
+  let frames=S.sourceFrames;
+  if(S.sourceFPS&&Math.abs(S.sourceFPS-fps)>0.5)frames=resample(frames,S.sourceFPS,fps);
+  frames=frames.slice(0,fps2*ms);
+  S.sheets=[];S.sheetMeta=[];
+  const numSheets=Math.min(ms,Math.ceil(frames.length/fps2));
+  for(let s=0;s<numSheets;s++){
+    const sf=frames.slice(s*fps2,(s+1)*fps2);
+    const r=Math.ceil(sf.length/fpr);
+    const sc=document.createElement('canvas');
+    sc.width=Math.min(fpr*cw,1024);sc.height=Math.min(r*ch,1024);
+    const sctx=sc.getContext('2d');
+    for(let fi=0;fi<sf.length;fi++){
+      const col=fi%fpr,row=Math.floor(fi/fpr);
+      const pct=((s*fps2+fi)/frames.length)*100;
+      updateGenOverlay(pct,`Sheet ${s+1} of ${numSheets}`,`${s+1}/${numSheets}`,`${fi+1}/${sf.length}`,frames.length);
+      setProg(true,`Sheet ${s+1}/${numSheets} · frame ${fi+1}/${sf.length}`,pct);
+      const src=sf[fi];
+      const tmp=document.createElement('canvas');tmp.width=S.sourceW;tmp.height=S.sourceH;
+      tmp.getContext('2d').putImageData(src,0,0);
+      const scaleX=cw/S.sourceW,scaleY=ch/S.sourceH,scale=Math.min(scaleX,scaleY);
+      const dw=Math.round(S.sourceW*scale),dh=Math.round(S.sourceH*scale);
+      const dx=col*cw+Math.floor((cw-dw)/2),dy=row*ch+Math.floor((ch-dh)/2);
+      sctx.drawImage(tmp,dx,dy,dw,dh);
+      if(fi%6===0)await yld();
+    }
+    S.sheets.push(sc);S.sheetMeta.push({framesPerRow:fpr,rows:r,frames:sf.length,fps});
+  }
+  hideGenOverlay();buildTabs();showSheet(0);buildLua();
+  outActions.classList.add('on');setProg(false);btnGen.disabled=false;
+  setStatus('done'); sbSheets.textContent=S.sheets.length;
+  showToast(`Generated ${S.sheets.length} sheet(s)`);
+}
+const yld=()=>new Promise(r=>requestAnimationFrame(r));
+function resample(frames,srcFps,dstFps){
+  const out=[],ratio=srcFps/dstFps,tot=Math.round(frames.length/ratio);
+  for(let i=0;i<tot;i++)out.push(frames[Math.min(Math.round(i*ratio),frames.length-1)]);
+  return out;
+}
+
+// ── TABS ───────────────────────────────────────────────────────────────────
+function buildTabs(){
+  sheetTabs.innerHTML='';
+  S.sheets.forEach((_,i)=>{
+    const t=document.createElement('button');t.className='stab'+(i===0?' active':'');
+    t.textContent=`Sheet ${i+1}`;t.addEventListener('click',()=>showSheet(i));
+    sheetTabs.appendChild(t);
+  });
+}
+function showSheet(idx){
+  S.activeTab=idx;
+  document.querySelectorAll('.stab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  const sc=S.sheets[idx];
+  previewCvs.width=sc.width;previewCvs.height=sc.height;
+  previewCvs.getContext('2d').drawImage(sc,0,0);
+  previewCvs.style.display='block';emptyEl.style.display='none';
+  fitToScreen();
+}
+
+// ── LUA HIGHLIGHT ──────────────────────────────────────────────────────────
+function luaHighlight(code) {
+  return code
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/(--[^\n]*)/g,'<span class="lua-comment">$1</span>')
+    .replace(/("(?:[^"\\]|\\.)*")/g,'<span class="lua-str">$1</span>')
+    .replace(/\b(\d+(?:\.\d+)?)\b/g,'<span class="lua-num">$1</span>')
+    .replace(/\b(local|return|function|end|if|then|else|for|in|do|not|and|or|true|false|nil)\b/g,'<span class="lua-kw">$1</span>')
+    .replace(/\b([A-Z][a-z]+\w*)\s*=/g,'<span class="lua-key">$1</span> =')
+    .replace(/\b(Color3\.fromRGB|rbxassetid)\b/g,'<span class="lua-fn">$1</span>');
+}
+function buildLua(){
+  const key=$('entry-name').value||'MyGif',disp=$('display-name').value||'My GIF';
+  const cat=$('category').value||'general',rgb=hexToRgb(colorHex.value);
+  const fps=parseFloat($('out-fps').value)||25;
+  let lua='';
+  if(S.sheets.length===1){
+    const m=S.sheetMeta[0];
+    lua=`${key} = {\n\tName         = "${disp}",\n\tCategory     = "${cat}",\n\tColor        = Color3.fromRGB(${rgb.r}, ${rgb.g}, ${rgb.b}),\n\tImage        = "rbxassetid://UPLOAD_SHEET_1_HERE",\n\tFPS          = ${fps},\n\tFramesPerRow = ${m.framesPerRow},\n\tFrames       = ${m.frames},\n},`;
+  }else{
+    lua=`${key} = {\n\tName     = "${disp}",\n\tCategory = "${cat}",\n\tColor    = Color3.fromRGB(${rgb.r}, ${rgb.g}, ${rgb.b}),\n\tSpriteSheets = {\n`;
+    S.sheetMeta.forEach((m,i)=>{lua+=`\t\t{ Image = "rbxassetid://UPLOAD_SHEET_${i+1}_HERE", FPS = ${fps}, FramesPerRow = ${m.framesPerRow}, Frames = ${m.frames} },\n`;});
+    lua+=`\t},\n},`;
+  }
+  luaOut.innerHTML=luaHighlight(lua);luaOut.classList.add('on');
+}
+
+// ── DOWNLOAD ───────────────────────────────────────────────────────────────
+btnDl.addEventListener('click',async()=>{
+  const base=$('entry-name').value||'sheet';
+  for(let i=0;i<S.sheets.length;i++){await dlCanvas(S.sheets[i],`${base}_${i+1}.png`);await new Promise(r=>setTimeout(r,80));}
+  showToast(`Downloaded ${S.sheets.length} sheet(s)`);
+});
+function dlCanvas(canvas,name){return new Promise(r=>{canvas.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);r();},'image/png');});}
+btnLua.addEventListener('click',()=>{
+  const text=luaOut.textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    btnLua.textContent='✓ Copied';setTimeout(()=>btnLua.textContent='⎘ Copy Lua',1400);showToast('Copied');
+  });
+});
+
+// ── RESET ──────────────────────────────────────────────────────────────────
+btnReset.addEventListener('click',()=>{
+  S.file=null;S.sourceFrames=[];S.sheets=[];S.sheetMeta=[];
+  fileInput.value='';fileName.textContent='';btnGen.disabled=true;
+  previewCvs.style.display='none';emptyEl.style.display='';
+  sheetTabs.innerHTML='';luaOut.innerHTML='';luaOut.classList.remove('on');
+  outActions.classList.remove('on');$('src-group').style.display='none';
+  liveWrap.classList.remove('on');timeline.classList.remove('on');
+  cancelAnimationFrame(LP.raf);LP.playing=false;
+  sbSize.textContent=sbFrames.textContent=sbFps.textContent=sbSheets.textContent='—';
+  setStatus('idle');setProg(false);V.zoom=1;V.panX=0;V.panY=0;applyTransform();
+  showToast('Reset');
+});
+
+recalc(); applyTransform();
 </script>
+</body>
+</html>
