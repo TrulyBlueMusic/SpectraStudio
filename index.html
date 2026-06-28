@@ -1,34 +1,34 @@
-&lt;!DOCTYPE html&gt;
-&lt;html lang=&quot;en&quot; data-theme=&quot;dark&quot;&gt;
-&lt;head&gt;
-&lt;meta property=&quot;og:title&quot; content=&quot;SpectraStudio&quot;&gt;
-&lt;meta property=&quot;og:description&quot; content=&quot;Professional spritesheet generator for SpectraVJS&quot;&gt;
-&lt;meta property=&quot;og:image&quot; content=&quot;https://raw.githubusercontent.com/TrulyBlueMusic/SpectraStudio/refs/heads/main/favicon.png&quot;&gt;
-&lt;meta property=&quot;og:url&quot; content=&quot;https://spectratools.vercel.app/&quot;&gt;
-&lt;meta property=&quot;og:type&quot; content=&quot;website&quot;&gt;
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta property="og:title" content="SpectraStudio">
+<meta property="og:description" content="Professional spritesheet generator for SpectraVJS">
+<meta property="og:image" content="https://raw.githubusercontent.com/TrulyBlueMusic/SpectraStudio/refs/heads/main/favicon.png">
+<meta property="og:url" content="https://spectratools.vercel.app/">
+<meta property="og:type" content="website">
 
-&lt;meta name=&quot;twitter:card&quot; content=&quot;summary_large_image&quot;&gt;
-&lt;link rel=&quot;icon&quot; type=&quot;image/png&quot; href=&quot;favicon.png&quot;&gt;
-&lt;meta charset=&quot;UTF-8&quot;&gt;
-&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-&lt;title&gt;SpectraStudio&lt;/title&gt;
-&lt;style&gt;
-@import url(&#039;https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap&#039;);
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpectraStudio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
 /* ── THEMES ── */
-:root[data-theme=&quot;dark&quot;] {
+:root[data-theme="dark"] {
   --bg0:#0a0a0a;--bg1:#111111;--bg2:#1a1a1a;--bg3:#222222;
   --line:#2a2a2a;--line-hi:#444444;--fg0:#f0f0f0;--fg1:#a0a0a0;--fg2:#555555;
   --acc:#e8e8e8;--acc-dim:#666666;--hi:#ffffff;--danger:#ff5555;--warn:#ffaa33;
   --shadow:rgba(0,0,0,0.6);--chk1:#1a1a1a;--chk2:#111111;
 }
-:root[data-theme=&quot;light&quot;] {
+:root[data-theme="light"] {
   --bg0:#f5f4f0;--bg1:#eeece8;--bg2:#e4e2dd;--bg3:#d8d5cf;
   --line:#c8c5be;--line-hi:#999690;--fg0:#1a1918;--fg1:#5a5854;--fg2:#9a9890;
   --acc:#1a1918;--acc-dim:#888580;--hi:#000000;--danger:#cc2222;--warn:#cc7700;
   --shadow:rgba(0,0,0,0.12);--chk1:#e0ddd8;--chk2:#d0cdc8;
 }
-:root[data-theme=&quot;amoled&quot;] {
+:root[data-theme="amoled"] {
   --bg0:#000000;--bg1:#000000;--bg2:#0d0d0d;--bg3:#1a1a1a;
   --line:#2a2a2a;--line-hi:#ffffff;--fg0:#ffffff;--fg1:#bbbbbb;--fg2:#444444;
   --acc:#ffffff;--acc-dim:#555555;--hi:#ffffff;--danger:#ffffff;--warn:#aaaaaa;
@@ -39,7 +39,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{height:100%;}
 body{
-  font-family:&#039;IBM Plex Sans&#039;,sans-serif;font-size:13px;
+  font-family:'IBM Plex Sans',sans-serif;font-size:13px;
   background:var(--bg0);color:var(--fg0);height:100vh;
   display:flex;flex-direction:column;overflow:hidden;
   transition:background 0.25s,color 0.25s;
@@ -53,16 +53,16 @@ body{
   transition:background 0.25s,border-color 0.25s;
 }
 .tb-wordmark{
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:13px;font-weight:700;
+  font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;
   letter-spacing:0.18em;color:var(--fg0);text-transform:uppercase;margin-right:20px;
 }
-.tb-slash{color:var(--fg2);font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:11px;margin:0 8px;}
-.tb-sub{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:10px;color:var(--fg2);letter-spacing:0.14em;}
+.tb-slash{color:var(--fg2);font-family:'IBM Plex Mono',monospace;font-size:11px;margin:0 8px;}
+.tb-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--fg2);letter-spacing:0.14em;}
 .tb-spacer{flex:1;}
 .theme-switcher{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden;transition:border-color 0.25s;}
 .theme-btn{
   background:transparent;border:none;padding:5px 11px;
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;letter-spacing:0.1em;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;
   color:var(--fg2);cursor:pointer;transition:background 0.15s,color 0.15s;
   border-right:1px solid var(--line);
 }
@@ -84,7 +84,7 @@ body{
 .s-group{border-bottom:1px solid var(--line);transition:border-color 0.25s;}
 .s-head{
   padding:8px 14px 7px;background:var(--bg2);
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;font-weight:700;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;
   letter-spacing:0.18em;color:var(--fg2);text-transform:uppercase;
   display:flex;align-items:center;gap:8px;
   transition:background 0.25s;
@@ -110,33 +110,33 @@ body{
 }
 #dropzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
 .dz-icon{
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:22px;color:var(--fg2);
+  font-family:'IBM Plex Mono',monospace;font-size:22px;color:var(--fg2);
   display:block;margin-bottom:8px;transition:transform 0.18s,color 0.18s;
 }
 #dropzone:hover .dz-icon{transform:translateY(-3px);color:var(--fg1);}
 #dropzone.drag-over .dz-icon{transform:translateY(-5px) scale(1.1);color:var(--fg0);}
-.dz-label{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;color:var(--fg1);}
-.dz-formats{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;color:var(--fg2);margin-top:4px;letter-spacing:0.08em;}
-#file-name{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;color:var(--acc);margin-top:6px;word-break:break-all;}
+.dz-label{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;color:var(--fg1);}
+.dz-formats{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg2);margin-top:4px;letter-spacing:0.08em;}
+#file-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--acc);margin-top:6px;word-break:break-all;}
 
 /* ── FORM ── */
 .field{display:flex;flex-direction:column;gap:4px;}
-.field-label{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;letter-spacing:0.12em;color:var(--fg2);text-transform:uppercase;}
+.field-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;color:var(--fg2);text-transform:uppercase;}
 .field input[type=number],.field input[type=text]{
   background:var(--bg0);border:1px solid var(--line);border-radius:2px;
-  color:var(--fg0);font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:12px;
+  color:var(--fg0);font-family:'IBM Plex Mono',monospace;font-size:12px;
   padding:6px 8px;outline:none;transition:border-color 0.15s,background 0.15s;width:100%;
   -moz-appearance:textfield;
 }
 .field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none;}
 .field input:focus{border-color:var(--acc-dim);background:var(--bg1);}
-.field-note{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;color:var(--fg2);line-height:1.5;}
+.field-note{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg2);line-height:1.5;}
 
 /* ── STAT GRID ── */
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:2px;overflow:hidden;}
 .stat-cell{background:var(--bg2);padding:7px 8px;transition:background 0.15s;}
-.stat-val{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:15px;font-weight:700;color:var(--fg0);line-height:1;transition:color 0.15s;}
-.stat-lbl{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:8px;color:var(--fg2);margin-top:3px;letter-spacing:0.1em;}
+.stat-val{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700;color:var(--fg0);line-height:1;transition:color 0.15s;}
+.stat-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--fg2);margin-top:3px;letter-spacing:0.1em;}
 .stat-val.bump{animation:stat-bump 0.25s cubic-bezier(0.34,1.56,0.64,1);}
 @keyframes stat-bump{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
 
@@ -151,7 +151,7 @@ body{
 .swatch-wrap input[type=color]{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);opacity:0;cursor:pointer;}
 .color-hex-inp{
   background:var(--bg0);border:1px solid var(--line);border-radius:2px;
-  color:var(--fg0);font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:11px;
+  color:var(--fg0);font-family:'IBM Plex Mono',monospace;font-size:11px;
   padding:6px 8px;outline:none;flex:1;transition:border-color 0.15s;
 }
 .color-hex-inp:focus{border-color:var(--acc-dim);}
@@ -168,7 +168,7 @@ body{
   display:inline-flex;align-items:center;justify-content:center;gap:6px;
   padding:8px 12px;border:1px solid var(--line);border-radius:2px;
   background:var(--bg3);color:var(--fg0);
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;
   cursor:pointer;text-transform:uppercase;position:relative;overflow:hidden;
   transition:background 0.15s,border-color 0.15s,color 0.15s,transform 0.1s,box-shadow 0.15s;
   white-space:nowrap;
@@ -193,7 +193,7 @@ body{
 .prog-wrap.on{display:flex;}
 .prog-track{height:2px;background:var(--line);border-radius:1px;overflow:hidden;}
 .prog-fill{height:100%;background:var(--fg0);border-radius:1px;width:0%;transition:width 0.12s ease-out;}
-.prog-label{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;color:var(--fg1);}
+.prog-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg1);}
 
 /* ── MAIN ── */
 #main{display:flex;flex-direction:column;overflow:hidden;min-height:0;}
@@ -204,10 +204,10 @@ body{
   background:var(--bg1);border-bottom:1px solid var(--line);flex-shrink:0;
   transition:background 0.25s;
 }
-.pbar-label{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;letter-spacing:0.14em;color:var(--fg2);text-transform:uppercase;}
+.pbar-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;color:var(--fg2);text-transform:uppercase;}
 #sheet-tabs{display:flex;gap:3px;position:relative;}
 .stab{
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;letter-spacing:0.1em;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;
   padding:4px 10px;border-radius:2px;background:transparent;border:1px solid var(--line);
   color:var(--fg2);cursor:pointer;text-transform:uppercase;
   transition:border-color 0.15s,color 0.15s,background 0.15s;
@@ -218,7 +218,7 @@ body{
 /* view controls */
 #view-controls{display:flex;align-items:center;gap:4px;margin-left:auto;}
 .vc-btn{
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;padding:3px 8px;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;padding:3px 8px;
   background:transparent;border:1px solid var(--line);border-radius:2px;
   color:var(--fg2);cursor:pointer;transition:all 0.12s;white-space:nowrap;
 }
@@ -238,7 +238,7 @@ body{
 }
 #live-controls{display:flex;align-items:center;gap:6px;padding:0 10px;flex:1;}
 .lc-btn{
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:12px;width:22px;height:22px;
+  font-family:'IBM Plex Mono',monospace;font-size:12px;width:22px;height:22px;
   background:transparent;border:1px solid var(--line);border-radius:2px;
   color:var(--fg1);cursor:pointer;display:flex;align-items:center;justify-content:center;
   transition:all 0.12s;flex-shrink:0;
@@ -246,7 +246,7 @@ body{
 .lc-btn:hover{border-color:var(--line-hi);color:var(--fg0);background:var(--bg2);}
 .lc-btn.active{background:var(--bg3);color:var(--fg0);border-color:var(--line-hi);}
 #live-info{
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;color:var(--fg2);
+  font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg2);
   margin-left:auto;display:flex;gap:12px;
 }
 .li-item{display:flex;flex-direction:column;gap:1px;align-items:flex-end;}
@@ -281,9 +281,9 @@ body{
   align-items:center;justify-content:center;gap:10px;text-align:center;
   pointer-events:none;
 }
-.empty-glyph{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:40px;color:var(--line);line-height:1;letter-spacing:-0.05em;}
-.empty-title{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:11px;font-weight:700;letter-spacing:0.18em;color:var(--fg2);text-transform:uppercase;}
-.empty-sub{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;color:var(--fg2);line-height:1.8;letter-spacing:0.06em;}
+.empty-glyph{font-family:'IBM Plex Mono',monospace;font-size:40px;color:var(--line);line-height:1;letter-spacing:-0.05em;}
+.empty-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.18em;color:var(--fg2);text-transform:uppercase;}
+.empty-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg2);line-height:1.8;letter-spacing:0.06em;}
 
 /* ── TIMELINE ── */
 #timeline{
@@ -312,7 +312,7 @@ body{
 #statusbar{
   display:flex;align-items:center;gap:0;height:22px;
   background:var(--bg1);border-top:1px solid var(--line);flex-shrink:0;
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;color:var(--fg2);
+  font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--fg2);
   padding:0;overflow:hidden;transition:background 0.25s;
 }
 .sb-item{
@@ -329,13 +329,13 @@ body{
   display:flex;align-items:center;gap:8px;padding:8px 16px;
   border-bottom:1px solid var(--line);
 }
-#output-strip-head span{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:9px;letter-spacing:0.14em;color:var(--fg2);text-transform:uppercase;}
+#output-strip-head span{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.14em;color:var(--fg2);text-transform:uppercase;}
 #output-actions{display:none;gap:6px;flex-wrap:wrap;margin-left:auto;}
 #output-actions.on{display:flex;}
 #output-body{padding:10px 16px;}
 #lua-output{
   display:none;background:var(--bg0);border:1px solid var(--line);border-radius:2px;
-  padding:10px 12px;font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:10px;line-height:1.7;
+  padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.7;
   white-space:pre;overflow-x:auto;max-height:140px;overflow-y:auto;
   transition:max-height 0.2s ease;
 }
@@ -363,225 +363,225 @@ body{
   animation:modal-in 0.18s ease-out;
 }
 @keyframes modal-in{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
-.gm-title{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:11px;font-weight:700;letter-spacing:0.16em;color:var(--fg0);}
+.gm-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.16em;color:var(--fg0);}
 .gm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .gm-cell{background:var(--bg2);padding:8px 10px;border-radius:2px;}
-.gm-val{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:14px;font-weight:700;color:var(--fg0);}
-.gm-lbl{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:8px;color:var(--fg2);margin-top:2px;letter-spacing:0.1em;}
+.gm-val{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--fg0);}
+.gm-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--fg2);margin-top:2px;letter-spacing:0.1em;}
 .gm-bar-track{height:3px;background:var(--line);border-radius:2px;overflow:hidden;}
 .gm-bar-fill{height:100%;background:var(--fg0);border-radius:2px;width:0%;transition:width 0.12s ease-out;}
-.gm-stage{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:10px;color:var(--fg1);}
-.gm-pct{font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:22px;font-weight:700;color:var(--fg0);text-align:center;}
+.gm-stage{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--fg1);}
+.gm-pct{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--fg0);text-align:center;}
 
 /* ── TOAST ── */
 #toast{
   position:fixed;bottom:18px;right:18px;
   background:var(--bg3);border:1px solid var(--line-hi);color:var(--fg0);
-  font-family:&#039;IBM Plex Mono&#039;,monospace;font-size:10px;letter-spacing:0.08em;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.08em;
   padding:8px 14px;border-radius:2px;
   opacity:0;pointer-events:none;z-index:999;
   transition:opacity 0.18s,transform 0.18s;
   transform:translateY(8px);
 }
 #toast.on{opacity:1;transform:translateY(0);}
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
+</style>
+</head>
+<body>
 
-&lt;div id=&quot;topbar&quot;&gt;
-  &lt;div class=&quot;tb-wordmark&quot;&gt;SpectraStudio&lt;/div&gt;
-  &lt;div class=&quot;tb-slash&quot;&gt;/&lt;/div&gt;
-  &lt;div class=&quot;tb-sub&quot;&gt;SPRITESHEET GENERATOR &amp;nbsp;·&amp;nbsp; TRS™&lt;/div&gt;
-  &lt;div class=&quot;tb-spacer&quot;&gt;&lt;/div&gt;
-  &lt;div class=&quot;theme-switcher&quot;&gt;
-    &lt;button class=&quot;theme-btn active&quot; data-t=&quot;dark&quot;&gt;DARK&lt;/button&gt;
-    &lt;button class=&quot;theme-btn&quot; data-t=&quot;light&quot;&gt;LIGHT&lt;/button&gt;
-    &lt;button class=&quot;theme-btn&quot; data-t=&quot;amoled&quot;&gt;AMOLED&lt;/button&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
+<div id="topbar">
+  <div class="tb-wordmark">SpectraStudio</div>
+  <div class="tb-slash">/</div>
+  <div class="tb-sub">SPRITESHEET GENERATOR &nbsp;·&nbsp; TRS™</div>
+  <div class="tb-spacer"></div>
+  <div class="theme-switcher">
+    <button class="theme-btn active" data-t="dark">DARK</button>
+    <button class="theme-btn" data-t="light">LIGHT</button>
+    <button class="theme-btn" data-t="amoled">AMOLED</button>
+  </div>
+</div>
 
-&lt;div id=&quot;body&quot;&gt;
-&lt;div id=&quot;sidebar&quot;&gt;
+<div id="body">
+<div id="sidebar">
 
-  &lt;div id=&quot;dropzone&quot;&gt;
-    &lt;input type=&quot;file&quot; id=&quot;file-input&quot; accept=&quot;image/gif,video/*&quot;&gt;
-    &lt;span class=&quot;dz-icon&quot;&gt;↑&lt;/span&gt;
-    &lt;div class=&quot;dz-label&quot;&gt;DROP FILE&lt;/div&gt;
-    &lt;div class=&quot;dz-formats&quot;&gt;gif · mp4 · webm · mov · avi&lt;/div&gt;
-    &lt;div id=&quot;file-name&quot;&gt;&lt;/div&gt;
-  &lt;/div&gt;
+  <div id="dropzone">
+    <input type="file" id="file-input" accept="image/gif,video/*">
+    <span class="dz-icon">↑</span>
+    <div class="dz-label">DROP FILE</div>
+    <div class="dz-formats">gif · mp4 · webm · mov · avi</div>
+    <div id="file-name"></div>
+  </div>
 
-  &lt;div class=&quot;s-group&quot; id=&quot;src-group&quot; style=&quot;display:none&quot;&gt;
-    &lt;div class=&quot;s-head&quot;&gt;&lt;div class=&quot;s-head-dot&quot;&gt;&lt;/div&gt;SOURCE&lt;/div&gt;
-    &lt;div class=&quot;s-body&quot;&gt;
-      &lt;div class=&quot;stat-grid&quot;&gt;
-        &lt;div class=&quot;stat-cell&quot;&gt;&lt;div class=&quot;stat-val&quot; id=&quot;src-w&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;stat-lbl&quot;&gt;WIDTH&lt;/div&gt;&lt;/div&gt;
-        &lt;div class=&quot;stat-cell&quot;&gt;&lt;div class=&quot;stat-val&quot; id=&quot;src-h&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;stat-lbl&quot;&gt;HEIGHT&lt;/div&gt;&lt;/div&gt;
-        &lt;div class=&quot;stat-cell&quot;&gt;&lt;div class=&quot;stat-val&quot; id=&quot;src-frames&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;stat-lbl&quot;&gt;FRAMES&lt;/div&gt;&lt;/div&gt;
-        &lt;div class=&quot;stat-cell&quot;&gt;&lt;div class=&quot;stat-val&quot; id=&quot;src-fps&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;stat-lbl&quot;&gt;SRC FPS&lt;/div&gt;&lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+  <div class="s-group" id="src-group" style="display:none">
+    <div class="s-head"><div class="s-head-dot"></div>SOURCE</div>
+    <div class="s-body">
+      <div class="stat-grid">
+        <div class="stat-cell"><div class="stat-val" id="src-w">—</div><div class="stat-lbl">WIDTH</div></div>
+        <div class="stat-cell"><div class="stat-val" id="src-h">—</div><div class="stat-lbl">HEIGHT</div></div>
+        <div class="stat-cell"><div class="stat-val" id="src-frames">—</div><div class="stat-lbl">FRAMES</div></div>
+        <div class="stat-cell"><div class="stat-val" id="src-fps">—</div><div class="stat-lbl">SRC FPS</div></div>
+      </div>
+    </div>
+  </div>
 
-  &lt;div class=&quot;s-group&quot;&gt;
-    &lt;div class=&quot;s-head&quot;&gt;&lt;div class=&quot;s-head-dot&quot;&gt;&lt;/div&gt;SHEET SETTINGS&lt;/div&gt;
-    &lt;div class=&quot;s-body&quot;&gt;
-      &lt;div class=&quot;field&quot;&gt;
-        &lt;div class=&quot;field-label&quot;&gt;FRAME SIZE — longest edge (px)&lt;/div&gt;
-        &lt;input type=&quot;number&quot; id=&quot;cell-size&quot; value=&quot;128&quot; min=&quot;16&quot; max=&quot;1024&quot;&gt;
-        &lt;div class=&quot;field-note&quot;&gt;Aspect ratio auto-detected from source&lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;field&quot;&gt;
-        &lt;div class=&quot;field-label&quot;&gt;MAX SPRITESHEETS&lt;/div&gt;
-        &lt;input type=&quot;number&quot; id=&quot;max-sheets&quot; value=&quot;3&quot; min=&quot;1&quot; max=&quot;20&quot;&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;field&quot;&gt;
-        &lt;div class=&quot;field-label&quot;&gt;OUTPUT FPS&lt;/div&gt;
-        &lt;input type=&quot;number&quot; id=&quot;out-fps&quot; value=&quot;25&quot; min=&quot;1&quot; max=&quot;120&quot;&gt;
-        &lt;div class=&quot;field-note&quot;&gt;Frame sample rate for video sources.&lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;stat-grid&quot;&gt;
-        &lt;div class=&quot;stat-cell&quot;&gt;&lt;div class=&quot;stat-val&quot; id=&quot;c-fpr&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;stat-lbl&quot;&gt;F/ROW&lt;/div&gt;&lt;/div&gt;
-        &lt;div class=&quot;stat-cell&quot;&gt;&lt;div class=&quot;stat-val&quot; id=&quot;c-rows&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;stat-lbl&quot;&gt;ROWS&lt;/div&gt;&lt;/div&gt;
-        &lt;div class=&quot;stat-cell&quot;&gt;&lt;div class=&quot;stat-val&quot; id=&quot;c-fpsh&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;stat-lbl&quot;&gt;F/SHEET&lt;/div&gt;&lt;/div&gt;
-        &lt;div class=&quot;stat-cell&quot;&gt;&lt;div class=&quot;stat-val&quot; id=&quot;c-total&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;stat-lbl&quot;&gt;TOTAL F&lt;/div&gt;&lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+  <div class="s-group">
+    <div class="s-head"><div class="s-head-dot"></div>SHEET SETTINGS</div>
+    <div class="s-body">
+      <div class="field">
+        <div class="field-label">FRAME SIZE — longest edge (px)</div>
+        <input type="number" id="cell-size" value="128" min="16" max="1024">
+        <div class="field-note">Aspect ratio auto-detected from source</div>
+      </div>
+      <div class="field">
+        <div class="field-label">MAX SPRITESHEETS</div>
+        <input type="number" id="max-sheets" value="3" min="1" max="20">
+      </div>
+      <div class="field">
+        <div class="field-label">OUTPUT FPS</div>
+        <input type="number" id="out-fps" value="25" min="1" max="120">
+        <div class="field-note">Frame sample rate for video sources.</div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-cell"><div class="stat-val" id="c-fpr">—</div><div class="stat-lbl">F/ROW</div></div>
+        <div class="stat-cell"><div class="stat-val" id="c-rows">—</div><div class="stat-lbl">ROWS</div></div>
+        <div class="stat-cell"><div class="stat-val" id="c-fpsh">—</div><div class="stat-lbl">F/SHEET</div></div>
+        <div class="stat-cell"><div class="stat-val" id="c-total">—</div><div class="stat-lbl">TOTAL F</div></div>
+      </div>
+    </div>
+  </div>
 
-  &lt;div class=&quot;s-group&quot;&gt;
-    &lt;div class=&quot;s-head&quot;&gt;&lt;div class=&quot;s-head-dot&quot;&gt;&lt;/div&gt;REGISTRY COLOR&lt;/div&gt;
-    &lt;div class=&quot;s-body&quot;&gt;
-      &lt;div class=&quot;color-row&quot;&gt;
-        &lt;div class=&quot;swatch-wrap&quot; id=&quot;swatch-wrap&quot; style=&quot;background:#515151&quot;&gt;
-          &lt;input type=&quot;color&quot; id=&quot;color-picker&quot; value=&quot;#515151&quot;&gt;
-        &lt;/div&gt;
-        &lt;input type=&quot;text&quot; class=&quot;color-hex-inp&quot; id=&quot;color-hex&quot; value=&quot;#515151&quot; maxlength=&quot;7&quot;&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;palette&quot;&gt;
-        &lt;div class=&quot;pal-dot active&quot; style=&quot;background:#515151&quot; data-c=&quot;#515151&quot;&gt;&lt;/div&gt;
-        &lt;div class=&quot;pal-dot&quot; style=&quot;background:#f0f0f0&quot; data-c=&quot;#f0f0f0&quot;&gt;&lt;/div&gt;
-        &lt;div class=&quot;pal-dot&quot; style=&quot;background:#000000;border:1px solid #444&quot; data-c=&quot;#000000&quot;&gt;&lt;/div&gt;
-        &lt;div class=&quot;pal-dot&quot; style=&quot;background:#1e64c8&quot; data-c=&quot;#1e64c8&quot;&gt;&lt;/div&gt;
-        &lt;div class=&quot;pal-dot&quot; style=&quot;background:#c83ca0&quot; data-c=&quot;#c83ca0&quot;&gt;&lt;/div&gt;
-        &lt;div class=&quot;pal-dot&quot; style=&quot;background:#8c28dc&quot; data-c=&quot;#8c28dc&quot;&gt;&lt;/div&gt;
-        &lt;div class=&quot;pal-dot&quot; style=&quot;background:#c82828&quot; data-c=&quot;#c82828&quot;&gt;&lt;/div&gt;
-        &lt;div class=&quot;pal-dot&quot; style=&quot;background:#dcb414&quot; data-c=&quot;#dcb414&quot;&gt;&lt;/div&gt;
-        &lt;div class=&quot;pal-dot&quot; style=&quot;background:#00c864&quot; data-c=&quot;#00c864&quot;&gt;&lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+  <div class="s-group">
+    <div class="s-head"><div class="s-head-dot"></div>REGISTRY COLOR</div>
+    <div class="s-body">
+      <div class="color-row">
+        <div class="swatch-wrap" id="swatch-wrap" style="background:#515151">
+          <input type="color" id="color-picker" value="#515151">
+        </div>
+        <input type="text" class="color-hex-inp" id="color-hex" value="#515151" maxlength="7">
+      </div>
+      <div class="palette">
+        <div class="pal-dot active" style="background:#515151" data-c="#515151"></div>
+        <div class="pal-dot" style="background:#f0f0f0" data-c="#f0f0f0"></div>
+        <div class="pal-dot" style="background:#000000;border:1px solid #444" data-c="#000000"></div>
+        <div class="pal-dot" style="background:#1e64c8" data-c="#1e64c8"></div>
+        <div class="pal-dot" style="background:#c83ca0" data-c="#c83ca0"></div>
+        <div class="pal-dot" style="background:#8c28dc" data-c="#8c28dc"></div>
+        <div class="pal-dot" style="background:#c82828" data-c="#c82828"></div>
+        <div class="pal-dot" style="background:#dcb414" data-c="#dcb414"></div>
+        <div class="pal-dot" style="background:#00c864" data-c="#00c864"></div>
+      </div>
+    </div>
+  </div>
 
-  &lt;div class=&quot;s-group&quot;&gt;
-    &lt;div class=&quot;s-head&quot;&gt;&lt;div class=&quot;s-head-dot&quot;&gt;&lt;/div&gt;REGISTRY ENTRY&lt;/div&gt;
-    &lt;div class=&quot;s-body&quot;&gt;
-      &lt;div class=&quot;field&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;KEY NAME&lt;/div&gt;&lt;input type=&quot;text&quot; id=&quot;entry-name&quot; value=&quot;MyGif&quot; placeholder=&quot;MyGif&quot;&gt;&lt;/div&gt;
-      &lt;div class=&quot;field&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;DISPLAY NAME&lt;/div&gt;&lt;input type=&quot;text&quot; id=&quot;display-name&quot; value=&quot;My GIF&quot; placeholder=&quot;My GIF&quot;&gt;&lt;/div&gt;
-      &lt;div class=&quot;field&quot;&gt;&lt;div class=&quot;field-label&quot;&gt;CATEGORY&lt;/div&gt;&lt;input type=&quot;text&quot; id=&quot;category&quot; value=&quot;general&quot; placeholder=&quot;general&quot;&gt;&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+  <div class="s-group">
+    <div class="s-head"><div class="s-head-dot"></div>REGISTRY ENTRY</div>
+    <div class="s-body">
+      <div class="field"><div class="field-label">KEY NAME</div><input type="text" id="entry-name" value="MyGif" placeholder="MyGif"></div>
+      <div class="field"><div class="field-label">DISPLAY NAME</div><input type="text" id="display-name" value="My GIF" placeholder="My GIF"></div>
+      <div class="field"><div class="field-label">CATEGORY</div><input type="text" id="category" value="general" placeholder="general"></div>
+    </div>
+  </div>
 
-  &lt;div class=&quot;s-group&quot;&gt;
-    &lt;div class=&quot;s-head&quot;&gt;&lt;div class=&quot;s-head-dot&quot;&gt;&lt;/div&gt;GENERATE&lt;/div&gt;
-    &lt;div class=&quot;s-body&quot;&gt;
-      &lt;div class=&quot;prog-wrap&quot; id=&quot;prog-wrap&quot;&gt;
-        &lt;div class=&quot;prog-label&quot; id=&quot;prog-label&quot;&gt;Processing...&lt;/div&gt;
-        &lt;div class=&quot;prog-track&quot;&gt;&lt;div class=&quot;prog-fill&quot; id=&quot;prog-fill&quot;&gt;&lt;/div&gt;&lt;/div&gt;
-      &lt;/div&gt;
-      &lt;button class=&quot;btn btn-primary btn-full&quot; id=&quot;btn-gen&quot; disabled&gt;▶  GENERATE SHEETS&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+  <div class="s-group">
+    <div class="s-head"><div class="s-head-dot"></div>GENERATE</div>
+    <div class="s-body">
+      <div class="prog-wrap" id="prog-wrap">
+        <div class="prog-label" id="prog-label">Processing...</div>
+        <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      </div>
+      <button class="btn btn-primary btn-full" id="btn-gen" disabled>▶  GENERATE SHEETS</button>
+    </div>
+  </div>
 
-&lt;/div&gt;&lt;!-- /sidebar --&gt;
+</div><!-- /sidebar -->
 
-&lt;div id=&quot;main&quot;&gt;
-  &lt;div id=&quot;preview-bar&quot;&gt;
-    &lt;div class=&quot;pbar-label&quot;&gt;Preview&lt;/div&gt;
-    &lt;div id=&quot;sheet-tabs&quot;&gt;&lt;/div&gt;
-    &lt;div id=&quot;view-controls&quot;&gt;
-      &lt;button class=&quot;vc-btn&quot; id=&quot;vc-fit&quot;&gt;Fit&lt;/button&gt;
-      &lt;button class=&quot;vc-btn&quot; id=&quot;vc-100&quot;&gt;100%&lt;/button&gt;
-      &lt;button class=&quot;vc-btn&quot; id=&quot;vc-200&quot;&gt;200%&lt;/button&gt;
-      &lt;button class=&quot;vc-btn&quot; id=&quot;vc-400&quot;&gt;400%&lt;/button&gt;
-      &lt;div class=&quot;vc-sep&quot;&gt;&lt;/div&gt;
-      &lt;button class=&quot;vc-btn&quot; id=&quot;vc-reset&quot;&gt;Reset&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+<div id="main">
+  <div id="preview-bar">
+    <div class="pbar-label">Preview</div>
+    <div id="sheet-tabs"></div>
+    <div id="view-controls">
+      <button class="vc-btn" id="vc-fit">Fit</button>
+      <button class="vc-btn" id="vc-100">100%</button>
+      <button class="vc-btn" id="vc-200">200%</button>
+      <button class="vc-btn" id="vc-400">400%</button>
+      <div class="vc-sep"></div>
+      <button class="vc-btn" id="vc-reset">Reset</button>
+    </div>
+  </div>
 
-  &lt;div id=&quot;live-preview-wrap&quot;&gt;
-    &lt;canvas id=&quot;live-preview-canvas&quot;&gt;&lt;/canvas&gt;
-    &lt;div id=&quot;live-controls&quot;&gt;
-      &lt;button class=&quot;lc-btn&quot; id=&quot;lc-restart&quot; title=&quot;Restart&quot;&gt;⏮&lt;/button&gt;
-      &lt;button class=&quot;lc-btn&quot; id=&quot;lc-play&quot; title=&quot;Play/Pause&quot;&gt;▶&lt;/button&gt;
-      &lt;button class=&quot;lc-btn active&quot; id=&quot;lc-loop&quot; title=&quot;Loop&quot;&gt;⟳&lt;/button&gt;
-      &lt;div id=&quot;live-info&quot;&gt;
-        &lt;div class=&quot;li-item&quot;&gt;&lt;span class=&quot;li-val&quot; id=&quot;li-frame&quot;&gt;0/0&lt;/span&gt;&lt;span class=&quot;li-lbl&quot;&gt;FRAME&lt;/span&gt;&lt;/div&gt;
-        &lt;div class=&quot;li-item&quot;&gt;&lt;span class=&quot;li-val&quot; id=&quot;li-fps&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;li-lbl&quot;&gt;FPS&lt;/span&gt;&lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+  <div id="live-preview-wrap">
+    <canvas id="live-preview-canvas"></canvas>
+    <div id="live-controls">
+      <button class="lc-btn" id="lc-restart" title="Restart">⏮</button>
+      <button class="lc-btn" id="lc-play" title="Play/Pause">▶</button>
+      <button class="lc-btn active" id="lc-loop" title="Loop">⟳</button>
+      <div id="live-info">
+        <div class="li-item"><span class="li-val" id="li-frame">0/0</span><span class="li-lbl">FRAME</span></div>
+        <div class="li-item"><span class="li-val" id="li-fps">0</span><span class="li-lbl">FPS</span></div>
+      </div>
+    </div>
+  </div>
 
-  &lt;div id=&quot;canvas-area&quot;&gt;
-    &lt;div id=&quot;canvas-viewport&quot;&gt;
-      &lt;div id=&quot;canvas-transform&quot;&gt;
-        &lt;canvas id=&quot;preview-canvas&quot;&gt;&lt;/canvas&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div id=&quot;empty&quot;&gt;
-      &lt;div class=&quot;empty-glyph&quot;&gt;[ ]&lt;/div&gt;
-      &lt;div class=&quot;empty-title&quot;&gt;No source loaded&lt;/div&gt;
-      &lt;div class=&quot;empty-sub&quot;&gt;Drop a GIF or video into the left panel.&lt;br&gt;Configure settings, then generate.&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+  <div id="canvas-area">
+    <div id="canvas-viewport">
+      <div id="canvas-transform">
+        <canvas id="preview-canvas"></canvas>
+      </div>
+    </div>
+    <div id="empty">
+      <div class="empty-glyph">[ ]</div>
+      <div class="empty-title">No source loaded</div>
+      <div class="empty-sub">Drop a GIF or video into the left panel.<br>Configure settings, then generate.</div>
+    </div>
+  </div>
 
-  &lt;div id=&quot;timeline&quot;&gt;&lt;div id=&quot;timeline-inner&quot;&gt;&lt;div id=&quot;tl-playhead&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  <div id="timeline"><div id="timeline-inner"><div id="tl-playhead"></div></div></div>
 
-  &lt;div id=&quot;statusbar&quot;&gt;
-    &lt;div class=&quot;sb-item&quot;&gt;&lt;span&gt;ZOOM&lt;/span&gt;&lt;span id=&quot;sb-zoom&quot;&gt;100%&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;sb-item&quot;&gt;&lt;span&gt;SIZE&lt;/span&gt;&lt;span id=&quot;sb-size&quot;&gt;—&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;sb-item&quot;&gt;&lt;span&gt;FRAMES&lt;/span&gt;&lt;span id=&quot;sb-frames&quot;&gt;—&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;sb-item&quot;&gt;&lt;span&gt;FPS&lt;/span&gt;&lt;span id=&quot;sb-fps&quot;&gt;—&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;sb-item&quot;&gt;&lt;span&gt;SHEETS&lt;/span&gt;&lt;span id=&quot;sb-sheets&quot;&gt;—&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;sb-item&quot;&gt;&lt;span&gt;CURSOR&lt;/span&gt;&lt;span id=&quot;sb-cursor&quot;&gt;—&lt;/span&gt;&lt;/div&gt;
-    &lt;div class=&quot;sb-spacer&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;sb-op&quot; id=&quot;sb-op&quot;&gt;idle&lt;/div&gt;
-  &lt;/div&gt;
+  <div id="statusbar">
+    <div class="sb-item"><span>ZOOM</span><span id="sb-zoom">100%</span></div>
+    <div class="sb-item"><span>SIZE</span><span id="sb-size">—</span></div>
+    <div class="sb-item"><span>FRAMES</span><span id="sb-frames">—</span></div>
+    <div class="sb-item"><span>FPS</span><span id="sb-fps">—</span></div>
+    <div class="sb-item"><span>SHEETS</span><span id="sb-sheets">—</span></div>
+    <div class="sb-item"><span>CURSOR</span><span id="sb-cursor">—</span></div>
+    <div class="sb-spacer"></div>
+    <div class="sb-op" id="sb-op">idle</div>
+  </div>
 
-  &lt;div id=&quot;output-strip&quot;&gt;
-    &lt;div id=&quot;output-strip-head&quot;&gt;
-      &lt;span&gt;Output&lt;/span&gt;
-      &lt;div id=&quot;output-actions&quot;&gt;
-        &lt;button class=&quot;btn btn-sm&quot; id=&quot;btn-dl&quot;&gt;⬇ Download all&lt;/button&gt;
-        &lt;button class=&quot;btn btn-sm&quot; id=&quot;btn-lua&quot;&gt;⎘ Copy Lua&lt;/button&gt;
-        &lt;button class=&quot;btn btn-sm&quot; id=&quot;btn-reset&quot;&gt;✕ Reset&lt;/button&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div id=&quot;output-body&quot;&gt;&lt;pre id=&quot;lua-output&quot;&gt;&lt;/pre&gt;&lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;&lt;!-- /main --&gt;
-&lt;/div&gt;&lt;!-- /body --&gt;
+  <div id="output-strip">
+    <div id="output-strip-head">
+      <span>Output</span>
+      <div id="output-actions">
+        <button class="btn btn-sm" id="btn-dl">⬇ Download all</button>
+        <button class="btn btn-sm" id="btn-lua">⎘ Copy Lua</button>
+        <button class="btn btn-sm" id="btn-reset">✕ Reset</button>
+      </div>
+    </div>
+    <div id="output-body"><pre id="lua-output"></pre></div>
+  </div>
+</div><!-- /main -->
+</div><!-- /body -->
 
-&lt;!-- Generation overlay --&gt;
-&lt;div id=&quot;gen-overlay&quot;&gt;
-  &lt;div id=&quot;gen-modal&quot;&gt;
-    &lt;div class=&quot;gm-title&quot;&gt;GENERATING SPRITESHEETS&lt;/div&gt;
-    &lt;div class=&quot;gm-pct&quot; id=&quot;gm-pct&quot;&gt;0%&lt;/div&gt;
-    &lt;div class=&quot;gm-bar-track&quot;&gt;&lt;div class=&quot;gm-bar-fill&quot; id=&quot;gm-bar&quot;&gt;&lt;/div&gt;&lt;/div&gt;
-    &lt;div class=&quot;gm-stage&quot; id=&quot;gm-stage&quot;&gt;Initialising...&lt;/div&gt;
-    &lt;div class=&quot;gm-grid&quot;&gt;
-      &lt;div class=&quot;gm-cell&quot;&gt;&lt;div class=&quot;gm-val&quot; id=&quot;gm-sheet&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;gm-lbl&quot;&gt;SHEET&lt;/div&gt;&lt;/div&gt;
-      &lt;div class=&quot;gm-cell&quot;&gt;&lt;div class=&quot;gm-val&quot; id=&quot;gm-frame&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;gm-lbl&quot;&gt;FRAME&lt;/div&gt;&lt;/div&gt;
-      &lt;div class=&quot;gm-cell&quot;&gt;&lt;div class=&quot;gm-val&quot; id=&quot;gm-elapsed&quot;&gt;0s&lt;/div&gt;&lt;div class=&quot;gm-lbl&quot;&gt;ELAPSED&lt;/div&gt;&lt;/div&gt;
-      &lt;div class=&quot;gm-cell&quot;&gt;&lt;div class=&quot;gm-val&quot; id=&quot;gm-eta&quot;&gt;—&lt;/div&gt;&lt;div class=&quot;gm-lbl&quot;&gt;ETA&lt;/div&gt;&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
+<!-- Generation overlay -->
+<div id="gen-overlay">
+  <div id="gen-modal">
+    <div class="gm-title">GENERATING SPRITESHEETS</div>
+    <div class="gm-pct" id="gm-pct">0%</div>
+    <div class="gm-bar-track"><div class="gm-bar-fill" id="gm-bar"></div></div>
+    <div class="gm-stage" id="gm-stage">Initialising...</div>
+    <div class="gm-grid">
+      <div class="gm-cell"><div class="gm-val" id="gm-sheet">—</div><div class="gm-lbl">SHEET</div></div>
+      <div class="gm-cell"><div class="gm-val" id="gm-frame">—</div><div class="gm-lbl">FRAME</div></div>
+      <div class="gm-cell"><div class="gm-val" id="gm-elapsed">0s</div><div class="gm-lbl">ELAPSED</div></div>
+      <div class="gm-cell"><div class="gm-val" id="gm-eta">—</div><div class="gm-lbl">ETA</div></div>
+    </div>
+  </div>
+</div>
 
-&lt;div id=&quot;toast&quot;&gt;&lt;/div&gt;
-&lt;canvas id=&quot;work-canvas&quot; style=&quot;display:none&quot;&gt;&lt;/canvas&gt;
-&lt;video id=&quot;work-video&quot; style=&quot;display:none&quot; muted crossorigin=&quot;anonymous&quot; preload=&quot;auto&quot;&gt;&lt;/video&gt;
+<div id="toast"></div>
+<canvas id="work-canvas" style="display:none"></canvas>
+<video id="work-video" style="display:none" muted crossorigin="anonymous" preload="auto"></video>
 
-&lt;script&gt;
+<script>
 // ── STATE ──────────────────────────────────────────────────────────────────
 const S = {
   file:null, sourceFrames:[], sourceFPS:25, sourceW:0, sourceH:0,
@@ -595,211 +595,211 @@ const V = { zoom:1, panX:0, panY:0, panning:false, lastX:0, lastY:0, spaceDown:f
 const LP = { playing:false, loop:true, frame:0, raf:null, lastT:0, frameDelay:40 };
 
 // ── ELEMENTS ───────────────────────────────────────────────────────────────
-const $ = id =&gt; document.getElementById(id);
-const dropzone=$(&#039;dropzone&#039;), fileInput=$(&#039;file-input&#039;), fileName=$(&#039;file-name&#039;);
-const btnGen=$(&#039;btn-gen&#039;), btnDl=$(&#039;btn-dl&#039;), btnLua=$(&#039;btn-lua&#039;), btnReset=$(&#039;btn-reset&#039;);
-const progWrap=$(&#039;prog-wrap&#039;), progFill=$(&#039;prog-fill&#039;), progLabel=$(&#039;prog-label&#039;);
-const previewCvs=$(&#039;preview-canvas&#039;), emptyEl=$(&#039;empty&#039;), sheetTabs=$(&#039;sheet-tabs&#039;);
-const luaOut=$(&#039;lua-output&#039;), outActions=$(&#039;output-actions&#039;);
-const workCvs=$(&#039;work-canvas&#039;), workVid=$(&#039;work-video&#039;), workCtx=workCvs.getContext(&#039;2d&#039;);
-const colorPick=$(&#039;color-picker&#039;), colorHex=$(&#039;color-hex&#039;), swatchWrap=$(&#039;swatch-wrap&#039;);
-const toast=$(&#039;toast&#039;);
-const canvasTransform=$(&#039;canvas-transform&#039;), canvasViewport=$(&#039;canvas-viewport&#039;);
-const liveCvs=$(&#039;live-preview-canvas&#039;), liveWrap=$(&#039;live-preview-wrap&#039;);
-const lcPlay=$(&#039;lc-play&#039;), lcLoop=$(&#039;lc-loop&#039;), lcRestart=$(&#039;lc-restart&#039;);
-const liFrame=$(&#039;li-frame&#039;), liFps=$(&#039;li-fps&#039;);
-const timeline=$(&#039;timeline&#039;), tlInner=$(&#039;timeline-inner&#039;), tlPlayhead=$(&#039;tl-playhead&#039;);
-const sbZoom=$(&#039;sb-zoom&#039;), sbSize=$(&#039;sb-size&#039;), sbFrames=$(&#039;sb-frames&#039;);
-const sbFps=$(&#039;sb-fps&#039;), sbSheets=$(&#039;sb-sheets&#039;), sbCursor=$(&#039;sb-cursor&#039;), sbOp=$(&#039;sb-op&#039;);
-const genOverlay=$(&#039;gen-overlay&#039;), gmPct=$(&#039;gm-pct&#039;), gmBar=$(&#039;gm-bar&#039;);
-const gmStage=$(&#039;gm-stage&#039;), gmSheet=$(&#039;gm-sheet&#039;), gmFrame=$(&#039;gm-frame&#039;);
-const gmElapsed=$(&#039;gm-elapsed&#039;), gmEta=$(&#039;gm-eta&#039;);
+const $ = id => document.getElementById(id);
+const dropzone=$('dropzone'), fileInput=$('file-input'), fileName=$('file-name');
+const btnGen=$('btn-gen'), btnDl=$('btn-dl'), btnLua=$('btn-lua'), btnReset=$('btn-reset');
+const progWrap=$('prog-wrap'), progFill=$('prog-fill'), progLabel=$('prog-label');
+const previewCvs=$('preview-canvas'), emptyEl=$('empty'), sheetTabs=$('sheet-tabs');
+const luaOut=$('lua-output'), outActions=$('output-actions');
+const workCvs=$('work-canvas'), workVid=$('work-video'), workCtx=workCvs.getContext('2d');
+const colorPick=$('color-picker'), colorHex=$('color-hex'), swatchWrap=$('swatch-wrap');
+const toast=$('toast');
+const canvasTransform=$('canvas-transform'), canvasViewport=$('canvas-viewport');
+const liveCvs=$('live-preview-canvas'), liveWrap=$('live-preview-wrap');
+const lcPlay=$('lc-play'), lcLoop=$('lc-loop'), lcRestart=$('lc-restart');
+const liFrame=$('li-frame'), liFps=$('li-fps');
+const timeline=$('timeline'), tlInner=$('timeline-inner'), tlPlayhead=$('tl-playhead');
+const sbZoom=$('sb-zoom'), sbSize=$('sb-size'), sbFrames=$('sb-frames');
+const sbFps=$('sb-fps'), sbSheets=$('sb-sheets'), sbCursor=$('sb-cursor'), sbOp=$('sb-op');
+const genOverlay=$('gen-overlay'), gmPct=$('gm-pct'), gmBar=$('gm-bar');
+const gmStage=$('gm-stage'), gmSheet=$('gm-sheet'), gmFrame=$('gm-frame');
+const gmElapsed=$('gm-elapsed'), gmEta=$('gm-eta');
 
 // ── THEME ──────────────────────────────────────────────────────────────────
-document.querySelectorAll(&#039;.theme-btn&#039;).forEach(b =&gt; b.addEventListener(&#039;click&#039;, () =&gt; {
+document.querySelectorAll('.theme-btn').forEach(b => b.addEventListener('click', () => {
   document.documentElement.dataset.theme = b.dataset.t;
-  document.querySelectorAll(&#039;.theme-btn&#039;).forEach(x =&gt; x.classList.toggle(&#039;active&#039;, x===b));
+  document.querySelectorAll('.theme-btn').forEach(x => x.classList.toggle('active', x===b));
 }));
 
 // ── RIPPLE ─────────────────────────────────────────────────────────────────
-document.querySelectorAll(&#039;.btn&#039;).forEach(btn =&gt; {
-  btn.addEventListener(&#039;click&#039;, e =&gt; {
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', e => {
     if (btn.disabled) return;
-    const r = document.createElement(&#039;span&#039;);
-    r.className = &#039;ripple&#039;;
+    const r = document.createElement('span');
+    r.className = 'ripple';
     const rect = btn.getBoundingClientRect();
     const sz = Math.max(rect.width, rect.height);
     r.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-rect.left-sz/2}px;top:${e.clientY-rect.top-sz/2}px`;
     btn.appendChild(r);
-    setTimeout(() =&gt; r.remove(), 420);
+    setTimeout(() => r.remove(), 420);
   });
 });
 
 // ── TOAST ──────────────────────────────────────────────────────────────────
 let toastT;
 function showToast(msg) {
-  toast.textContent = msg; toast.classList.add(&#039;on&#039;);
-  clearTimeout(toastT); toastT = setTimeout(() =&gt; toast.classList.remove(&#039;on&#039;), 2200);
+  toast.textContent = msg; toast.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => toast.classList.remove('on'), 2200);
 }
 
-// ── DRAG &amp; DROP ────────────────────────────────────────────────────────────
-dropzone.addEventListener(&#039;dragover&#039;, e =&gt; { e.preventDefault(); dropzone.classList.add(&#039;drag-over&#039;); });
-dropzone.addEventListener(&#039;dragleave&#039;, () =&gt; dropzone.classList.remove(&#039;drag-over&#039;));
-dropzone.addEventListener(&#039;drop&#039;, e =&gt; {
-  e.preventDefault(); dropzone.classList.remove(&#039;drag-over&#039;);
+// ── DRAG & DROP ────────────────────────────────────────────────────────────
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault(); dropzone.classList.remove('drag-over');
   const f = e.dataTransfer.files[0]; if (f) loadFile(f);
 });
-fileInput.addEventListener(&#039;change&#039;, () =&gt; { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
 
 // ── RECALC + STAT BUMP ────────────────────────────────────────────────────
 function animateStat(el, val) {
   el.textContent = val;
-  el.classList.remove(&#039;bump&#039;);
-  requestAnimationFrame(() =&gt; el.classList.add(&#039;bump&#039;));
+  el.classList.remove('bump');
+  requestAnimationFrame(() => el.classList.add('bump'));
 }
 function recalc() {
-  const size = parseInt($(&#039;cell-size&#039;).value) || 128;
-  const ms   = parseInt($(&#039;max-sheets&#039;).value) || 1;
-  const ar   = (S.sourceW &amp;&amp; S.sourceH) ? S.sourceH / S.sourceW : 1;
+  const size = parseInt($('cell-size').value) || 128;
+  const ms   = parseInt($('max-sheets').value) || 1;
+  const ar   = (S.sourceW && S.sourceH) ? S.sourceH / S.sourceW : 1;
   const cw   = size, ch = Math.round(size * ar);
   const fpr  = Math.max(1, Math.floor(1024 / cw));
   const rows = Math.max(1, Math.floor(1024 / ch));
   const fps  = fpr * rows, tot = fps * ms;
-  animateStat($(&#039;c-fpr&#039;), fpr); animateStat($(&#039;c-rows&#039;), rows);
-  animateStat($(&#039;c-fpsh&#039;), fps); animateStat($(&#039;c-total&#039;), tot);
+  animateStat($('c-fpr'), fpr); animateStat($('c-rows'), rows);
+  animateStat($('c-fpsh'), fps); animateStat($('c-total'), tot);
 }
-[&#039;cell-size&#039;,&#039;max-sheets&#039;,&#039;out-fps&#039;].forEach(id =&gt; $(id).addEventListener(&#039;input&#039;, recalc));
+['cell-size','max-sheets','out-fps'].forEach(id => $(id).addEventListener('input', recalc));
 recalc();
 
 // ── COLOR ──────────────────────────────────────────────────────────────────
 function hexToRgb(h) {
-  h=h.replace(&#039;#&#039;,&#039;&#039;); if(h.length===3) h=h.split(&#039;&#039;).map(c=&gt;c+c).join(&#039;&#039;);
-  const n=parseInt(h,16); return {r:(n&gt;&gt;16)&amp;255,g:(n&gt;&gt;8)&amp;255,b:n&amp;255};
+  h=h.replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join('');
+  const n=parseInt(h,16); return {r:(n>>16)&255,g:(n>>8)&255,b:n&255};
 }
 function setColor(hex) {
   if(!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
   colorPick.value=hex; colorHex.value=hex; swatchWrap.style.background=hex;
-  document.querySelectorAll(&#039;.pal-dot&#039;).forEach(d=&gt;d.classList.toggle(&#039;active&#039;,d.dataset.c.toLowerCase()===hex.toLowerCase()));
+  document.querySelectorAll('.pal-dot').forEach(d=>d.classList.toggle('active',d.dataset.c.toLowerCase()===hex.toLowerCase()));
 }
-colorPick.addEventListener(&#039;input&#039;, () =&gt; setColor(colorPick.value));
-colorHex.addEventListener(&#039;change&#039;, () =&gt; setColor(colorHex.value));
-document.querySelectorAll(&#039;.pal-dot&#039;).forEach(d =&gt; d.addEventListener(&#039;click&#039;, () =&gt; setColor(d.dataset.c)));
+colorPick.addEventListener('input', () => setColor(colorPick.value));
+colorHex.addEventListener('change', () => setColor(colorHex.value));
+document.querySelectorAll('.pal-dot').forEach(d => d.addEventListener('click', () => setColor(d.dataset.c)));
 
 // ── PROGRESS ───────────────────────────────────────────────────────────────
 function setProg(on, label, pct) {
-  progWrap.classList.toggle(&#039;on&#039;, on);
+  progWrap.classList.toggle('on', on);
   if (label) progLabel.textContent = label;
-  progFill.style.width = (pct !== undefined ? pct : 0) + &#039;%&#039;;
-  if (!on) progFill.style.width = &#039;0%&#039;;
+  progFill.style.width = (pct !== undefined ? pct : 0) + '%';
+  if (!on) progFill.style.width = '0%';
 }
-function setStatus(op) { sbOp.textContent = op || &#039;idle&#039;; }
+function setStatus(op) { sbOp.textContent = op || 'idle'; }
 
 // ── GEN OVERLAY ────────────────────────────────────────────────────────────
 let genStart = 0;
-function showGenOverlay() { genOverlay.classList.add(&#039;on&#039;); genStart = Date.now(); }
-function hideGenOverlay() { genOverlay.classList.remove(&#039;on&#039;); }
+function showGenOverlay() { genOverlay.classList.add('on'); genStart = Date.now(); }
+function hideGenOverlay() { genOverlay.classList.remove('on'); }
 function updateGenOverlay(pct, stage, sheet, frame, total) {
   const p = Math.round(pct);
-  gmPct.textContent = p + &#039;%&#039;;
-  gmBar.style.width = p + &#039;%&#039;;
+  gmPct.textContent = p + '%';
+  gmBar.style.width = p + '%';
   gmStage.textContent = stage;
   gmSheet.textContent = sheet;
   gmFrame.textContent = frame;
   const elapsed = (Date.now() - genStart) / 1000;
-  gmElapsed.textContent = elapsed.toFixed(1) + &#039;s&#039;;
-  if (pct &gt; 0 &amp;&amp; pct &lt; 100) {
+  gmElapsed.textContent = elapsed.toFixed(1) + 's';
+  if (pct > 0 && pct < 100) {
     const eta = (elapsed / (pct / 100)) - elapsed;
-    gmEta.textContent = eta.toFixed(1) + &#039;s&#039;;
-  } else { gmEta.textContent = &#039;—&#039;; }
+    gmEta.textContent = eta.toFixed(1) + 's';
+  } else { gmEta.textContent = '—'; }
 }
 
 // ── LOAD FILE ──────────────────────────────────────────────────────────────
 async function loadFile(file) {
   S.file=file; S.sheets=[]; S.sourceFrames=[];
   fileName.textContent=file.name;
-  const isGif=file.type===&#039;image/gif&#039;, isVid=file.type.startsWith(&#039;video/&#039;);
-  if(!isGif&amp;&amp;!isVid){showToast(&#039;Unsupported file type&#039;);return;}
-  setProg(true,&#039;Loading...&#039;); setStatus(&#039;loading&#039;);
+  const isGif=file.type==='image/gif', isVid=file.type.startsWith('video/');
+  if(!isGif&&!isVid){showToast('Unsupported file type');return;}
+  setProg(true,'Loading...'); setStatus('loading');
   try {
     if(isGif) await extractGif(file); else await extractVideo(file);
-    $(&#039;src-group&#039;).style.display=&#039;&#039;;
-    animateStat($(&#039;src-w&#039;), S.sourceW); animateStat($(&#039;src-h&#039;), S.sourceH);
-    animateStat($(&#039;src-frames&#039;), S.sourceFrames.length);
-    animateStat($(&#039;src-fps&#039;), S.sourceFPS.toFixed(1));
+    $('src-group').style.display='';
+    animateStat($('src-w'), S.sourceW); animateStat($('src-h'), S.sourceH);
+    animateStat($('src-frames'), S.sourceFrames.length);
+    animateStat($('src-fps'), S.sourceFPS.toFixed(1));
     recalc(); btnGen.disabled=false;
     // start live preview
     startLivePreview();
     buildTimeline();
-    setProg(false); setStatus(&#039;ready&#039;);
-    sbSize.textContent = S.sourceW + &#039;×&#039; + S.sourceH;
+    setProg(false); setStatus('ready');
+    sbSize.textContent = S.sourceW + '×' + S.sourceH;
     sbFrames.textContent = S.sourceFrames.length;
     sbFps.textContent = S.sourceFPS.toFixed(1);
     showToast(`Loaded ${S.sourceFrames.length} frames`);
-  } catch(e) { setProg(false); setStatus(&#039;error&#039;); showToast(&#039;Error: &#039;+e.message); console.error(e); }
+  } catch(e) { setProg(false); setStatus('error'); showToast('Error: '+e.message); console.error(e); }
 }
 
 // ── GIF DECODER ────────────────────────────────────────────────────────────
 async function extractGif(file) {
   const buf=await file.arrayBuffer(), bytes=new Uint8Array(buf);
   const frames=parseGIF(bytes);
-  if(!frames.length) throw new Error(&#039;No frames decoded&#039;);
+  if(!frames.length) throw new Error('No frames decoded');
   S.sourceW=frames[0].width; S.sourceH=frames[0].height;
-  const totalMs=frames.reduce((a,f)=&gt;a+(f.delay||100),0);
+  const totalMs=frames.reduce((a,f)=>a+(f.delay||100),0);
   S.sourceFPS=frames.length/(totalMs/1000);
-  S.sourceFrames=frames.map(f=&gt;new ImageData(new Uint8ClampedArray(f.rgba),f.width,f.height));
+  S.sourceFrames=frames.map(f=>new ImageData(new Uint8ClampedArray(f.rgba),f.width,f.height));
 }
 function parseGIF(bytes) {
   let pos=6;
-  const lw=bytes[pos]|(bytes[pos+1]&lt;&lt;8);pos+=2;
-  const lh=bytes[pos]|(bytes[pos+1]&lt;&lt;8);pos+=2;
+  const lw=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
+  const lh=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
   const pk=bytes[pos++];
-  const hasGCT=(pk&gt;&gt;7)&amp;1,gctSz=2&lt;&lt;(pk&amp;7);pos+=2;
+  const hasGCT=(pk>>7)&1,gctSz=2<<(pk&7);pos+=2;
   let gct=null;
-  if(hasGCT){gct=[];for(let i=0;i&lt;gctSz;i++){gct.push([bytes[pos],bytes[pos+1],bytes[pos+2]]);pos+=3;}}
+  if(hasGCT){gct=[];for(let i=0;i<gctSz;i++){gct.push([bytes[pos],bytes[pos+1],bytes[pos+2]]);pos+=3;}}
   const frames=[];let gce=null;
-  const cc=document.createElement(&#039;canvas&#039;);cc.width=lw;cc.height=lh;
-  const cx=cc.getContext(&#039;2d&#039;);
-  while(pos&lt;bytes.length){
+  const cc=document.createElement('canvas');cc.width=lw;cc.height=lh;
+  const cx=cc.getContext('2d');
+  while(pos<bytes.length){
     const s=bytes[pos++];if(s===0x3B)break;
     if(s===0x21){
       const lbl=bytes[pos++];
       if(lbl===0xF9){
         pos++;const pf=bytes[pos++];
-        const delay=(bytes[pos]|(bytes[pos+1]&lt;&lt;8))*10;pos+=2;
+        const delay=(bytes[pos]|(bytes[pos+1]<<8))*10;pos+=2;
         const ti=bytes[pos++];pos++;
-        gce={disposalMethod:(pf&gt;&gt;2)&amp;7,transparentFlag:pf&amp;1,transparentIndex:ti,delay:delay||100};
+        gce={disposalMethod:(pf>>2)&7,transparentFlag:pf&1,transparentIndex:ti,delay:delay||100};
       }else{while(true){const bs=bytes[pos++];if(bs===0)break;pos+=bs;}}
       continue;
     }
     if(s===0x2C){
-      const ix=bytes[pos]|(bytes[pos+1]&lt;&lt;8);pos+=2;
-      const iy=bytes[pos]|(bytes[pos+1]&lt;&lt;8);pos+=2;
-      const iw=bytes[pos]|(bytes[pos+1]&lt;&lt;8);pos+=2;
-      const ih=bytes[pos]|(bytes[pos+1]&lt;&lt;8);pos+=2;
+      const ix=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
+      const iy=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
+      const iw=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
+      const ih=bytes[pos]|(bytes[pos+1]<<8);pos+=2;
       const ip=bytes[pos++];
-      const hasLCT=(ip&gt;&gt;7)&amp;1,interlaced=(ip&gt;&gt;6)&amp;1,lctSz=2&lt;&lt;(ip&amp;7);
+      const hasLCT=(ip>>7)&1,interlaced=(ip>>6)&1,lctSz=2<<(ip&7);
       let ct=gct;
-      if(hasLCT){ct=[];for(let i=0;i&lt;lctSz;i++){ct.push([bytes[pos],bytes[pos+1],bytes[pos+2]]);pos+=3;}}
+      if(hasLCT){ct=[];for(let i=0;i<lctSz;i++){ct.push([bytes[pos],bytes[pos+1],bytes[pos+2]]);pos+=3;}}
       const minLZW=bytes[pos++];const lzwData=[];
-      while(true){const bs=bytes[pos++];if(bs===0)break;for(let i=0;i&lt;bs;i++)lzwData.push(bytes[pos++]);}
+      while(true){const bs=bytes[pos++];if(bs===0)break;for(let i=0;i<bs;i++)lzwData.push(bytes[pos++]);}
       const indices=lzwDecode(new Uint8Array(lzwData),minLZW);
       const disposal=gce?gce.disposalMethod:0;
       let saved=null;if(disposal===3)saved=cx.getImageData(ix,iy,iw,ih);
       const fd_data=cx.getImageData(0,0,lw,lh);const fd=fd_data.data;
-      const ti=(gce&amp;&amp;gce.transparentFlag)?gce.transparentIndex:-1;
+      const ti=(gce&&gce.transparentFlag)?gce.transparentIndex:-1;
       let si=0;
       if(interlaced){
         const rowMap=[];
         for(const pass of [{s:0,st:8},{s:4,st:8},{s:2,st:4},{s:1,st:2}]){
-          for(let r=pass.s;r&lt;ih;r+=pass.st){rowMap[r]=[];for(let c=0;c&lt;iw;c++)rowMap[r][c]=indices[si++];}
+          for(let r=pass.s;r<ih;r+=pass.st){rowMap[r]=[];for(let c=0;c<iw;c++)rowMap[r][c]=indices[si++];}
         }
-        for(let r=0;r&lt;ih;r++)for(let c=0;c&lt;iw;c++){
+        for(let r=0;r<ih;r++)for(let c=0;c<iw;c++){
           const pi=rowMap[r][c];if(pi===ti)continue;
           const px=((iy+r)*lw+(ix+c))*4;const[R,G,B]=ct[pi]||[0,0,0];
           fd[px]=R;fd[px+1]=G;fd[px+2]=B;fd[px+3]=255;
         }
       }else{
-        for(let r=0;r&lt;ih;r++)for(let c=0;c&lt;iw;c++){
+        for(let r=0;r<ih;r++)for(let c=0;c<iw;c++){
           const pi=indices[si++];if(pi===ti)continue;
           const px=((iy+r)*lw+(ix+c))*4;const[R,G,B]=ct[pi]||[0,0,0];
           fd[px]=R;fd[px+1]=G;fd[px+2]=B;fd[px+3]=255;
@@ -809,28 +809,28 @@ function parseGIF(bytes) {
       const snap=cx.getImageData(0,0,lw,lh);
       frames.push({width:lw,height:lh,rgba:snap.data.slice(),delay:gce?gce.delay:100});
       if(disposal===2)cx.clearRect(ix,iy,iw,ih);
-      else if(disposal===3&amp;&amp;saved)cx.putImageData(saved,ix,iy);
+      else if(disposal===3&&saved)cx.putImageData(saved,ix,iy);
       gce=null;continue;
     }
   }
   return frames;
 }
 function lzwDecode(data,minCode){
-  const cc=1&lt;&lt;minCode,eof=cc+1;let codeSize=minCode+1,mask=(1&lt;&lt;codeSize)-1;
+  const cc=1<<minCode,eof=cc+1;let codeSize=minCode+1,mask=(1<<codeSize)-1;
   const tbl=[];
-  function init(){tbl.length=0;for(let i=0;i&lt;cc;i++)tbl.push([i]);tbl.push([cc]);tbl.push([eof]);codeSize=minCode+1;mask=(1&lt;&lt;codeSize)-1;}
+  function init(){tbl.length=0;for(let i=0;i<cc;i++)tbl.push([i]);tbl.push([cc]);tbl.push([eof]);codeSize=minCode+1;mask=(1<<codeSize)-1;}
   init();let bp=0;
-  function read(){let c=0;for(let i=0;i&lt;codeSize;i++){const by=Math.floor((bp+i)/8),bi=(bp+i)%8;if(by&lt;data.length&amp;&amp;(data[by]&gt;&gt;bi)&amp;1)c|=1&lt;&lt;i;}bp+=codeSize;return c;}
+  function read(){let c=0;for(let i=0;i<codeSize;i++){const by=Math.floor((bp+i)/8),bi=(bp+i)%8;if(by<data.length&&(data[by]>>bi)&1)c|=1<<i;}bp+=codeSize;return c;}
   const out=[];let prev=null;
   while(true){
-    const code=read();if(code===eof||bp&gt;data.length*8+codeSize)break;
+    const code=read();if(code===eof||bp>data.length*8+codeSize)break;
     if(code===cc){init();prev=null;continue;}
     let entry;
-    if(code&lt;tbl.length)entry=tbl[code];
-    else if(prev!==null&amp;&amp;code===tbl.length)entry=prev.concat(prev[0]);
+    if(code<tbl.length)entry=tbl[code];
+    else if(prev!==null&&code===tbl.length)entry=prev.concat(prev[0]);
     else break;
     for(const v of entry)out.push(v);
-    if(prev!==null){tbl.push(prev.concat(entry[0]));if(tbl.length&gt;mask&amp;&amp;codeSize&lt;12){codeSize++;mask=(1&lt;&lt;codeSize)-1;}}
+    if(prev!==null){tbl.push(prev.concat(entry[0]));if(tbl.length>mask&&codeSize<12){codeSize++;mask=(1<<codeSize)-1;}}
     prev=entry;
   }
   return out;
@@ -838,17 +838,17 @@ function lzwDecode(data,minCode){
 
 // ── VIDEO ──────────────────────────────────────────────────────────────────
 async function extractVideo(file) {
-  return new Promise((resolve, reject) =&gt; {
+  return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
 
     workVid.src = url;
-    workVid.preload = &quot;auto&quot;;
+    workVid.preload = "auto";
     workVid.muted = true;
 
-    workVid.addEventListener(&quot;loadedmetadata&quot;, async () =&gt; {
+    workVid.addEventListener("loadedmetadata", async () => {
       try {
         const duration = workVid.duration;
-        const fps = parseFloat($(&quot;out-fps&quot;).value) || 25;
+        const fps = parseFloat($("out-fps").value) || 25;
 
         S.sourceFPS = fps;
 
@@ -861,7 +861,7 @@ async function extractVideo(file) {
         const total = Math.floor(duration * fps);
         S.sourceFrames = [];
 
-        for (let i = 0; i &lt; total; i++) {
+        for (let i = 0; i < total; i++) {
 
           // tiny epsilon prevents duplicate first frame
           let t = i / fps;
@@ -869,7 +869,7 @@ async function extractVideo(file) {
           if (i === 0)
             t += 0.001;
 
-          if (t &gt; duration - 0.05)
+          if (t > duration - 0.05)
             t = duration - 0.05;
 
           await seekVid(workVid, t);
@@ -902,9 +902,9 @@ async function extractVideo(file) {
       }
     }, { once: true });
 
-    workVid.addEventListener(&quot;error&quot;, () =&gt; {
+    workVid.addEventListener("error", () => {
       URL.revokeObjectURL(url);
-      reject(new Error(&quot;Video load failed.&quot;));
+      reject(new Error("Video load failed."));
     }, { once: true });
 
     workVid.load();
@@ -912,44 +912,44 @@ async function extractVideo(file) {
 }
 
 function seekVid(video, time) {
-  return new Promise(resolve =&gt; {
+  return new Promise(resolve => {
 
-    const finish = () =&gt; {
-      requestAnimationFrame(() =&gt; {
+    const finish = () => {
+      requestAnimationFrame(() => {
         requestAnimationFrame(resolve);
       });
     };
 
-    if (Math.abs(video.currentTime - time) &lt; 0.0005) {
+    if (Math.abs(video.currentTime - time) < 0.0005) {
       finish();
       return;
     }
 
     video.currentTime = time;
 
-    video.addEventListener(&quot;seeked&quot;, finish, { once: true });
+    video.addEventListener("seeked", finish, { once: true });
 
   });
 }
 
 // ── LIVE PREVIEW ───────────────────────────────────────────────────────────
-const livectx = liveCvs.getContext(&#039;2d&#039;);
+const livectx = liveCvs.getContext('2d');
 function startLivePreview() {
   if (!S.sourceFrames.length) return;
-  liveWrap.classList.add(&#039;on&#039;);
+  liveWrap.classList.add('on');
   LP.frame=0; LP.playing=true; LP.loop=true;
   LP.frameDelay = 1000 / S.sourceFPS;
-  lcPlay.textContent=&#039;⏸&#039;; lcLoop.classList.add(&#039;active&#039;);
+  lcPlay.textContent='⏸'; lcLoop.classList.add('active');
   liveCvs.width=S.sourceW; liveCvs.height=S.sourceH;
   cancelAnimationFrame(LP.raf); LP.lastT=performance.now();
   LP.raf=requestAnimationFrame(tickLive);
 }
 function tickLive(now) {
   if (!LP.playing) return;
-  if (now - LP.lastT &gt;= LP.frameDelay) {
+  if (now - LP.lastT >= LP.frameDelay) {
     LP.lastT=now; LP.frame++;
-    if (LP.frame&gt;=S.sourceFrames.length) {
-      if (LP.loop) LP.frame=0; else { LP.playing=false; lcPlay.textContent=&#039;▶&#039;; return; }
+    if (LP.frame>=S.sourceFrames.length) {
+      if (LP.loop) LP.frame=0; else { LP.playing=false; lcPlay.textContent='▶'; return; }
     }
     renderLiveFrame();
     updateTimeline();
@@ -962,49 +962,49 @@ function renderLiveFrame() {
   liFrame.textContent=`${LP.frame+1}/${S.sourceFrames.length}`;
   liFps.textContent=S.sourceFPS.toFixed(0);
 }
-lcPlay.addEventListener(&#039;click&#039;,()=&gt;{
+lcPlay.addEventListener('click',()=>{
   if(!S.sourceFrames.length)return;
-  LP.playing=!LP.playing; lcPlay.textContent=LP.playing?&#039;⏸&#039;:&#039;▶&#039;;
+  LP.playing=!LP.playing; lcPlay.textContent=LP.playing?'⏸':'▶';
   if(LP.playing){LP.lastT=performance.now();LP.raf=requestAnimationFrame(tickLive);}
 });
-lcLoop.addEventListener(&#039;click&#039;,()=&gt;{LP.loop=!LP.loop;lcLoop.classList.toggle(&#039;active&#039;,LP.loop);});
-lcRestart.addEventListener(&#039;click&#039;,()=&gt;{
+lcLoop.addEventListener('click',()=>{LP.loop=!LP.loop;lcLoop.classList.toggle('active',LP.loop);});
+lcRestart.addEventListener('click',()=>{
   if(!S.sourceFrames.length)return;
-  LP.frame=0;LP.playing=true;lcPlay.textContent=&#039;⏸&#039;;LP.lastT=performance.now();
+  LP.frame=0;LP.playing=true;lcPlay.textContent='⏸';LP.lastT=performance.now();
   cancelAnimationFrame(LP.raf);LP.raf=requestAnimationFrame(tickLive);renderLiveFrame();
 });
 
 // ── TIMELINE ───────────────────────────────────────────────────────────────
 function buildTimeline() {
-  if(!S.sourceFrames.length){timeline.classList.remove(&#039;on&#039;);return;}
-  timeline.classList.add(&#039;on&#039;);
+  if(!S.sourceFrames.length){timeline.classList.remove('on');return;}
+  timeline.classList.add('on');
   // clear old frames (keep playhead)
-  Array.from(tlInner.children).forEach(c=&gt;{if(c!==tlPlayhead)c.remove();});
-  S.sourceFrames.forEach((frame,i)=&gt;{
-    const el=document.createElement(&#039;div&#039;);el.className=&#039;tl-frame&#039;;
-    if(i===LP.frame)el.classList.add(&#039;active&#039;);
-    const c=document.createElement(&#039;canvas&#039;);c.width=S.sourceW;c.height=S.sourceH;
-    c.getContext(&#039;2d&#039;).putImageData(frame,0,0);
+  Array.from(tlInner.children).forEach(c=>{if(c!==tlPlayhead)c.remove();});
+  S.sourceFrames.forEach((frame,i)=>{
+    const el=document.createElement('div');el.className='tl-frame';
+    if(i===LP.frame)el.classList.add('active');
+    const c=document.createElement('canvas');c.width=S.sourceW;c.height=S.sourceH;
+    c.getContext('2d').putImageData(frame,0,0);
     el.appendChild(c);
-    el.addEventListener(&#039;click&#039;,()=&gt;{LP.frame=i;LP.playing=false;lcPlay.textContent=&#039;▶&#039;;renderLiveFrame();updateTimeline();});
-    el.addEventListener(&#039;mouseenter&#039;,()=&gt;{sbCursor.textContent=`frame ${i+1}`;});
+    el.addEventListener('click',()=>{LP.frame=i;LP.playing=false;lcPlay.textContent='▶';renderLiveFrame();updateTimeline();});
+    el.addEventListener('mouseenter',()=>{sbCursor.textContent=`frame ${i+1}`;});
     tlInner.appendChild(el);
   });
 }
 function updateTimeline() {
-  const frames=tlInner.querySelectorAll(&#039;.tl-frame&#039;);
-  frames.forEach((f,i)=&gt;f.classList.toggle(&#039;active&#039;,i===LP.frame));
+  const frames=tlInner.querySelectorAll('.tl-frame');
+  frames.forEach((f,i)=>f.classList.toggle('active',i===LP.frame));
   const active=frames[LP.frame];
   if(active){
     const left=active.offsetLeft+active.offsetWidth/2;
-    tlPlayhead.style.left=left+&#039;px&#039;;
+    tlPlayhead.style.left=left+'px';
   }
 }
 
 // ── VIEWPORT / PAN / ZOOM ─────────────────────────────────────────────────
 function applyTransform() {
   canvasTransform.style.transform=`translate(${V.panX}px,${V.panY}px) scale(${V.zoom})`;
-  sbZoom.textContent=Math.round(V.zoom*100)+&#039;%&#039;;
+  sbZoom.textContent=Math.round(V.zoom*100)+'%';
 }
 function fitToScreen() {
   if(!previewCvs.width||!previewCvs.height)return;
@@ -1019,71 +1019,71 @@ function setZoom(z) {
   V.zoom=z; V.panX=(area.width-previewCvs.width*z)/2; V.panY=(area.height-previewCvs.height*z)/2;
   applyTransform();
 }
-$(&#039;vc-fit&#039;).addEventListener(&#039;click&#039;,fitToScreen);
-$(&#039;vc-100&#039;).addEventListener(&#039;click&#039;,()=&gt;setZoom(1));
-$(&#039;vc-200&#039;).addEventListener(&#039;click&#039;,()=&gt;setZoom(2));
-$(&#039;vc-400&#039;).addEventListener(&#039;click&#039;,()=&gt;setZoom(4));
-$(&#039;vc-reset&#039;).addEventListener(&#039;click&#039;,()=&gt;{V.zoom=1;V.panX=0;V.panY=0;applyTransform();});
+$('vc-fit').addEventListener('click',fitToScreen);
+$('vc-100').addEventListener('click',()=>setZoom(1));
+$('vc-200').addEventListener('click',()=>setZoom(2));
+$('vc-400').addEventListener('click',()=>setZoom(4));
+$('vc-reset').addEventListener('click',()=>{V.zoom=1;V.panX=0;V.panY=0;applyTransform();});
 
-canvasViewport.addEventListener(&#039;wheel&#039;,e=&gt;{
+canvasViewport.addEventListener('wheel',e=>{
   e.preventDefault();
   const rect=canvasViewport.getBoundingClientRect();
   const mx=e.clientX-rect.left, my=e.clientY-rect.top;
   const oldZoom=V.zoom;
-  V.zoom=Math.max(0.1,Math.min(32,V.zoom*(e.deltaY&lt;0?1.12:0.89)));
+  V.zoom=Math.max(0.1,Math.min(32,V.zoom*(e.deltaY<0?1.12:0.89)));
   V.panX=mx-(mx-V.panX)*(V.zoom/oldZoom);
   V.panY=my-(my-V.panY)*(V.zoom/oldZoom);
   applyTransform();
 },{passive:false});
 
-canvasViewport.addEventListener(&#039;mousedown&#039;,e=&gt;{
-  if(e.button===1||(e.button===0&amp;&amp;V.spaceDown)){e.preventDefault();V.panning=true;V.lastX=e.clientX;V.lastY=e.clientY;canvasViewport.style.cursor=&#039;grabbing&#039;;}
+canvasViewport.addEventListener('mousedown',e=>{
+  if(e.button===1||(e.button===0&&V.spaceDown)){e.preventDefault();V.panning=true;V.lastX=e.clientX;V.lastY=e.clientY;canvasViewport.style.cursor='grabbing';}
 });
-window.addEventListener(&#039;mousemove&#039;,e=&gt;{
+window.addEventListener('mousemove',e=>{
   if(V.panning){V.panX+=e.clientX-V.lastX;V.panY+=e.clientY-V.lastY;V.lastX=e.clientX;V.lastY=e.clientY;applyTransform();}
   // cursor position
-  if(previewCvs.style.display!==&#039;none&#039;){
+  if(previewCvs.style.display!=='none'){
     const rect=canvasTransform.getBoundingClientRect();
     const cx=Math.floor((e.clientX-rect.left)/V.zoom), cy=Math.floor((e.clientY-rect.top)/V.zoom);
-    if(cx&gt;=0&amp;&amp;cy&gt;=0&amp;&amp;cx&lt;previewCvs.width&amp;&amp;cy&lt;previewCvs.height) sbCursor.textContent=`${cx},${cy}`;
+    if(cx>=0&&cy>=0&&cx<previewCvs.width&&cy<previewCvs.height) sbCursor.textContent=`${cx},${cy}`;
   }
 });
-window.addEventListener(&#039;mouseup&#039;,e=&gt;{if(e.button===1||V.panning){V.panning=false;canvasViewport.style.cursor=V.spaceDown?&#039;grab&#039;:&#039;default&#039;;}});
-window.addEventListener(&#039;keydown&#039;,e=&gt;{if(e.code===&#039;Space&#039;&amp;&amp;document.activeElement.tagName!==&#039;INPUT&#039;){e.preventDefault();V.spaceDown=true;canvasViewport.style.cursor=&#039;grab&#039;;}});
-window.addEventListener(&#039;keyup&#039;,e=&gt;{if(e.code===&#039;Space&#039;){V.spaceDown=false;if(!V.panning)canvasViewport.style.cursor=&#039;default&#039;;}});
+window.addEventListener('mouseup',e=>{if(e.button===1||V.panning){V.panning=false;canvasViewport.style.cursor=V.spaceDown?'grab':'default';}});
+window.addEventListener('keydown',e=>{if(e.code==='Space'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();V.spaceDown=true;canvasViewport.style.cursor='grab';}});
+window.addEventListener('keyup',e=>{if(e.code==='Space'){V.spaceDown=false;if(!V.panning)canvasViewport.style.cursor='default';}});
 
 // ── GENERATE ───────────────────────────────────────────────────────────────
-btnGen.addEventListener(&#039;click&#039;,generate);
+btnGen.addEventListener('click',generate);
 async function generate() {
   if(!S.sourceFrames.length)return;
-  btnGen.disabled=true; showGenOverlay(); setStatus(&#039;generating&#039;);
-  const size=parseInt($(&#039;cell-size&#039;).value)||128;
-  const ar=(S.sourceW&amp;&amp;S.sourceH)?S.sourceH/S.sourceW:1;
+  btnGen.disabled=true; showGenOverlay(); setStatus('generating');
+  const size=parseInt($('cell-size').value)||128;
+  const ar=(S.sourceW&&S.sourceH)?S.sourceH/S.sourceW:1;
   const cw=size, ch=Math.max(1,Math.round(size*ar));
-  const ms=parseInt($(&#039;max-sheets&#039;).value)||1;
-  const fps=parseFloat($(&#039;out-fps&#039;).value)||25;
+  const ms=parseInt($('max-sheets').value)||1;
+  const fps=parseFloat($('out-fps').value)||25;
   const fpr=Math.max(1,Math.floor(1024/cw));
   const rows=Math.max(1,Math.floor(1024/ch));
   const fps2=fpr*rows;
   let frames=S.sourceFrames;
-  if(S.sourceFPS&amp;&amp;Math.abs(S.sourceFPS-fps)&gt;0.5)frames=resample(frames,S.sourceFPS,fps);
+  if(S.sourceFPS&&Math.abs(S.sourceFPS-fps)>0.5)frames=resample(frames,S.sourceFPS,fps);
   frames=frames.slice(0,fps2*ms);
   S.sheets=[];S.sheetMeta=[];
   const numSheets=Math.min(ms,Math.ceil(frames.length/fps2));
-  for(let s=0;s&lt;numSheets;s++){
+  for(let s=0;s<numSheets;s++){
     const sf=frames.slice(s*fps2,(s+1)*fps2);
     const r=Math.ceil(sf.length/fpr);
-    const sc=document.createElement(&#039;canvas&#039;);
+    const sc=document.createElement('canvas');
     sc.width=Math.min(fpr*cw,1024);sc.height=Math.min(r*ch,1024);
-    const sctx=sc.getContext(&#039;2d&#039;);
-    for(let fi=0;fi&lt;sf.length;fi++){
+    const sctx=sc.getContext('2d');
+    for(let fi=0;fi<sf.length;fi++){
       const col=fi%fpr,row=Math.floor(fi/fpr);
       const pct=((s*fps2+fi)/frames.length)*100;
       updateGenOverlay(pct,`Sheet ${s+1} of ${numSheets}`,`${s+1}/${numSheets}`,`${fi+1}/${sf.length}`,frames.length);
       setProg(true,`Sheet ${s+1}/${numSheets} · frame ${fi+1}/${sf.length}`,pct);
       const src=sf[fi];
-      const tmp=document.createElement(&#039;canvas&#039;);tmp.width=S.sourceW;tmp.height=S.sourceH;
-      tmp.getContext(&#039;2d&#039;).putImageData(src,0,0);
+      const tmp=document.createElement('canvas');tmp.width=S.sourceW;tmp.height=S.sourceH;
+      tmp.getContext('2d').putImageData(src,0,0);
       const scaleX=cw/S.sourceW,scaleY=ch/S.sourceH,scale=Math.min(scaleX,scaleY);
       const dw=Math.round(S.sourceW*scale),dh=Math.round(S.sourceH*scale);
       const dx=col*cw+Math.floor((cw-dw)/2),dy=row*ch+Math.floor((ch-dh)/2);
@@ -1093,92 +1093,92 @@ async function generate() {
     S.sheets.push(sc);S.sheetMeta.push({framesPerRow:fpr,rows:r,frames:sf.length,fps});
   }
   hideGenOverlay();buildTabs();showSheet(0);buildLua();
-  outActions.classList.add(&#039;on&#039;);setProg(false);btnGen.disabled=false;
-  setStatus(&#039;done&#039;); sbSheets.textContent=S.sheets.length;
+  outActions.classList.add('on');setProg(false);btnGen.disabled=false;
+  setStatus('done'); sbSheets.textContent=S.sheets.length;
   showToast(`Generated ${S.sheets.length} sheet(s)`);
 }
-const yld=()=&gt;new Promise(r=&gt;requestAnimationFrame(r));
+const yld=()=>new Promise(r=>requestAnimationFrame(r));
 function resample(frames,srcFps,dstFps){
   const out=[],ratio=srcFps/dstFps,tot=Math.round(frames.length/ratio);
-  for(let i=0;i&lt;tot;i++)out.push(frames[Math.min(Math.round(i*ratio),frames.length-1)]);
+  for(let i=0;i<tot;i++)out.push(frames[Math.min(Math.round(i*ratio),frames.length-1)]);
   return out;
 }
 
 // ── TABS ───────────────────────────────────────────────────────────────────
 function buildTabs(){
-  sheetTabs.innerHTML=&#039;&#039;;
-  S.sheets.forEach((_,i)=&gt;{
-    const t=document.createElement(&#039;button&#039;);t.className=&#039;stab&#039;+(i===0?&#039; active&#039;:&#039;&#039;);
-    t.textContent=`Sheet ${i+1}`;t.addEventListener(&#039;click&#039;,()=&gt;showSheet(i));
+  sheetTabs.innerHTML='';
+  S.sheets.forEach((_,i)=>{
+    const t=document.createElement('button');t.className='stab'+(i===0?' active':'');
+    t.textContent=`Sheet ${i+1}`;t.addEventListener('click',()=>showSheet(i));
     sheetTabs.appendChild(t);
   });
 }
 function showSheet(idx){
   S.activeTab=idx;
-  document.querySelectorAll(&#039;.stab&#039;).forEach((t,i)=&gt;t.classList.toggle(&#039;active&#039;,i===idx));
+  document.querySelectorAll('.stab').forEach((t,i)=>t.classList.toggle('active',i===idx));
   const sc=S.sheets[idx];
   previewCvs.width=sc.width;previewCvs.height=sc.height;
-  previewCvs.getContext(&#039;2d&#039;).drawImage(sc,0,0);
-  previewCvs.style.display=&#039;block&#039;;emptyEl.style.display=&#039;none&#039;;
+  previewCvs.getContext('2d').drawImage(sc,0,0);
+  previewCvs.style.display='block';emptyEl.style.display='none';
   fitToScreen();
 }
 
 // ── LUA HIGHLIGHT ──────────────────────────────────────────────────────────
 function luaHighlight(code) {
   return code
-    .replace(/&amp;/g,&#039;&amp;amp;&#039;).replace(/&lt;/g,&#039;&amp;lt;&#039;).replace(/&gt;/g,&#039;&amp;gt;&#039;)
-    .replace(/(--[^\n]*)/g,&#039;&lt;span class=&quot;lua-comment&quot;&gt;$1&lt;/span&gt;&#039;)
-    .replace(/(&quot;(?:[^&quot;\\]|\\.)*&quot;)/g,&#039;&lt;span class=&quot;lua-str&quot;&gt;$1&lt;/span&gt;&#039;)
-    .replace(/\b(\d+(?:\.\d+)?)\b/g,&#039;&lt;span class=&quot;lua-num&quot;&gt;$1&lt;/span&gt;&#039;)
-    .replace(/\b(local|return|function|end|if|then|else|for|in|do|not|and|or|true|false|nil)\b/g,&#039;&lt;span class=&quot;lua-kw&quot;&gt;$1&lt;/span&gt;&#039;)
-    .replace(/\b([A-Z][a-z]+\w*)\s*=/g,&#039;&lt;span class=&quot;lua-key&quot;&gt;$1&lt;/span&gt; =&#039;)
-    .replace(/\b(Color3\.fromRGB|rbxassetid)\b/g,&#039;&lt;span class=&quot;lua-fn&quot;&gt;$1&lt;/span&gt;&#039;);
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/(--[^\n]*)/g,'<span class="lua-comment">$1</span>')
+    .replace(/("(?:[^"\\]|\\.)*")/g,'<span class="lua-str">$1</span>')
+    .replace(/\b(\d+(?:\.\d+)?)\b/g,'<span class="lua-num">$1</span>')
+    .replace(/\b(local|return|function|end|if|then|else|for|in|do|not|and|or|true|false|nil)\b/g,'<span class="lua-kw">$1</span>')
+    .replace(/\b([A-Z][a-z]+\w*)\s*=/g,'<span class="lua-key">$1</span> =')
+    .replace(/\b(Color3\.fromRGB|rbxassetid)\b/g,'<span class="lua-fn">$1</span>');
 }
 function buildLua(){
-  const key=$(&#039;entry-name&#039;).value||&#039;MyGif&#039;,disp=$(&#039;display-name&#039;).value||&#039;My GIF&#039;;
-  const cat=$(&#039;category&#039;).value||&#039;general&#039;,rgb=hexToRgb(colorHex.value);
-  const fps=parseFloat($(&#039;out-fps&#039;).value)||25;
-  let lua=&#039;&#039;;
+  const key=$('entry-name').value||'MyGif',disp=$('display-name').value||'My GIF';
+  const cat=$('category').value||'general',rgb=hexToRgb(colorHex.value);
+  const fps=parseFloat($('out-fps').value)||25;
+  let lua='';
   if(S.sheets.length===1){
     const m=S.sheetMeta[0];
-    lua=`${key} = {\n\tName         = &quot;${disp}&quot;,\n\tCategory     = &quot;${cat}&quot;,\n\tColor        = Color3.fromRGB(${rgb.r}, ${rgb.g}, ${rgb.b}),\n\tImage        = &quot;rbxassetid://UPLOAD_SHEET_1_HERE&quot;,\n\tFPS          = ${fps},\n\tFramesPerRow = ${m.framesPerRow},\n\tFrames       = ${m.frames},\n},`;
+    lua=`${key} = {\n\tName         = "${disp}",\n\tCategory     = "${cat}",\n\tColor        = Color3.fromRGB(${rgb.r}, ${rgb.g}, ${rgb.b}),\n\tImage        = "rbxassetid://UPLOAD_SHEET_1_HERE",\n\tFPS          = ${fps},\n\tFramesPerRow = ${m.framesPerRow},\n\tFrames       = ${m.frames},\n},`;
   }else{
-    lua=`${key} = {\n\tName     = &quot;${disp}&quot;,\n\tCategory = &quot;${cat}&quot;,\n\tColor    = Color3.fromRGB(${rgb.r}, ${rgb.g}, ${rgb.b}),\n\tSpriteSheets = {\n`;
-    S.sheetMeta.forEach((m,i)=&gt;{lua+=`\t\t{ Image = &quot;rbxassetid://UPLOAD_SHEET_${i+1}_HERE&quot;, FPS = ${fps}, FramesPerRow = ${m.framesPerRow}, Frames = ${m.frames} },\n`;});
+    lua=`${key} = {\n\tName     = "${disp}",\n\tCategory = "${cat}",\n\tColor    = Color3.fromRGB(${rgb.r}, ${rgb.g}, ${rgb.b}),\n\tSpriteSheets = {\n`;
+    S.sheetMeta.forEach((m,i)=>{lua+=`\t\t{ Image = "rbxassetid://UPLOAD_SHEET_${i+1}_HERE", FPS = ${fps}, FramesPerRow = ${m.framesPerRow}, Frames = ${m.frames} },\n`;});
     lua+=`\t},\n},`;
   }
-  luaOut.innerHTML=luaHighlight(lua);luaOut.classList.add(&#039;on&#039;);
+  luaOut.innerHTML=luaHighlight(lua);luaOut.classList.add('on');
 }
 
 // ── DOWNLOAD ───────────────────────────────────────────────────────────────
-btnDl.addEventListener(&#039;click&#039;,async()=&gt;{
-  const base=$(&#039;entry-name&#039;).value||&#039;sheet&#039;;
-  for(let i=0;i&lt;S.sheets.length;i++){await dlCanvas(S.sheets[i],`${base}_${i+1}.png`);await new Promise(r=&gt;setTimeout(r,80));}
+btnDl.addEventListener('click',async()=>{
+  const base=$('entry-name').value||'sheet';
+  for(let i=0;i<S.sheets.length;i++){await dlCanvas(S.sheets[i],`${base}_${i+1}.png`);await new Promise(r=>setTimeout(r,80));}
   showToast(`Downloaded ${S.sheets.length} sheet(s)`);
 });
-function dlCanvas(canvas,name){return new Promise(r=&gt;{canvas.toBlob(blob=&gt;{const a=document.createElement(&#039;a&#039;);a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=&gt;URL.revokeObjectURL(a.href),1000);r();},&#039;image/png&#039;);});}
-btnLua.addEventListener(&#039;click&#039;,()=&gt;{
+function dlCanvas(canvas,name){return new Promise(r=>{canvas.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);r();},'image/png');});}
+btnLua.addEventListener('click',()=>{
   const text=luaOut.textContent;
-  navigator.clipboard.writeText(text).then(()=&gt;{
-    btnLua.textContent=&#039;✓ Copied&#039;;setTimeout(()=&gt;btnLua.textContent=&#039;⎘ Copy Lua&#039;,1400);showToast(&#039;Copied&#039;);
+  navigator.clipboard.writeText(text).then(()=>{
+    btnLua.textContent='✓ Copied';setTimeout(()=>btnLua.textContent='⎘ Copy Lua',1400);showToast('Copied');
   });
 });
 
 // ── RESET ──────────────────────────────────────────────────────────────────
-btnReset.addEventListener(&#039;click&#039;,()=&gt;{
+btnReset.addEventListener('click',()=>{
   S.file=null;S.sourceFrames=[];S.sheets=[];S.sheetMeta=[];
-  fileInput.value=&#039;&#039;;fileName.textContent=&#039;&#039;;btnGen.disabled=true;
-  previewCvs.style.display=&#039;none&#039;;emptyEl.style.display=&#039;&#039;;
-  sheetTabs.innerHTML=&#039;&#039;;luaOut.innerHTML=&#039;&#039;;luaOut.classList.remove(&#039;on&#039;);
-  outActions.classList.remove(&#039;on&#039;);$(&#039;src-group&#039;).style.display=&#039;none&#039;;
-  liveWrap.classList.remove(&#039;on&#039;);timeline.classList.remove(&#039;on&#039;);
+  fileInput.value='';fileName.textContent='';btnGen.disabled=true;
+  previewCvs.style.display='none';emptyEl.style.display='';
+  sheetTabs.innerHTML='';luaOut.innerHTML='';luaOut.classList.remove('on');
+  outActions.classList.remove('on');$('src-group').style.display='none';
+  liveWrap.classList.remove('on');timeline.classList.remove('on');
   cancelAnimationFrame(LP.raf);LP.playing=false;
-  sbSize.textContent=sbFrames.textContent=sbFps.textContent=sbSheets.textContent=&#039;—&#039;;
-  setStatus(&#039;idle&#039;);setProg(false);V.zoom=1;V.panX=0;V.panY=0;applyTransform();
-  showToast(&#039;Reset&#039;);
+  sbSize.textContent=sbFrames.textContent=sbFps.textContent=sbSheets.textContent='—';
+  setStatus('idle');setProg(false);V.zoom=1;V.panX=0;V.panY=0;applyTransform();
+  showToast('Reset');
 });
 
 recalc(); applyTransform();
-&lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;
+</script>
+</body>
+</html>
